@@ -1,0 +1,2022 @@
+{\rtf1\ansi\ansicpg1251\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 Courier;\f1\fmodern\fcharset0 Courier-Oblique;\f2\fnil\fcharset0 Menlo-Regular;
+}
+{\colortbl;\red255\green255\blue255;\red195\green123\blue90;\red19\green20\blue21;\red89\green158\blue96;
+\red174\green176\blue183;\red103\green107\blue114;\red72\green151\blue245;\red185\green101\blue173;\red71\green149\blue242;
+\red164\green160\blue78;\red38\green157\blue169;}
+{\*\expandedcolortbl;;\csgenericrgb\c76471\c48235\c35294;\csgenericrgb\c7451\c7843\c8235;\csgenericrgb\c34902\c61961\c37647;
+\csgenericrgb\c68235\c69020\c71765;\csgenericrgb\c40392\c41961\c44706;\csgenericrgb\c28235\c59216\c96078;\csgenericrgb\c72549\c39608\c67843;\csgenericrgb\c27843\c58431\c94902;
+\csgenericrgb\c64314\c62745\c30588;\csgenericrgb\c14902\c61569\c66275;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs26 \cf2 \cb3 import \cf4 'package:flutter/material.dart'\cf5 ;\
+\cf2 import \cf4 'package:firebase_core/firebase_core.dart'\cf5 ;\
+\cf2 import \cf4 'package:firebase_auth/firebase_auth.dart'\cf5 ;\
+\cf2 import \cf4 'package:cloud_firestore/cloud_firestore.dart'\cf5 ;\
+\cf2 import \cf4 'package:image_picker/image_picker.dart'\cf5 ;\
+\cf2 import \cf4 'package:url_launcher/url_launcher.dart'\cf5 ;\
+\cf2 import \cf4 'package:record/record.dart'\cf5 ;\
+\cf2 import \cf4 'package:audioplayers/audioplayers.dart'\cf5 ;\
+\cf2 import \cf4 'dart:convert'\cf5 ;\
+\cf2 import \cf4 'dart:io'\cf5 ;\
+\cf2 import \cf4 'package:path_provider/path_provider.dart'\cf5 ;\
+\cf2 import \cf4 'dart:async'\cf5 ;\
+\
+\cf6 // --- \uc0\u1050 \u1054 \u1053 \u1057 \u1058 \u1040 \u1053 \u1058 \u1067  (\u1042 \u1057 \u1058 \u1040 \u1042 \u1068  \u1057 \u1042 \u1054 \u1049  UID \u1048 \u1047  \u1050 \u1040 \u1053 \u1057 \u1054 \u1051 \u1030  FIREBASE) ---\
+\cf2 const \cf5 String adminUid = \cf4 "2hKzVux0oohdS9iIaL7VgkDlhVc2"\cf5 ;\
+\
+\cf2 const \cf5 List<String> belarusRegions = [\
+  \cf4 "\uc0\u1052 \u1110 \u1085 \u1089 \u1082 "\cf5 , \cf4 "\uc0\u1052 \u1110 \u1085 \u1089 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\cf5 , \cf4 "\uc0\u1041 \u1088 \u1101 \u1089 \u1090 "\cf5 , \cf4 "\uc0\u1041 \u1088 \u1101 \u1089 \u1094 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\cf5 ,\
+  \cf4 "\uc0\u1043 \u1088 \u1086 \u1076 \u1085 \u1072 "\cf5 , \cf4 "\uc0\u1043 \u1088 \u1086 \u1076 \u1079 \u1077 \u1085 \u1089 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\cf5 , \cf4 "\uc0\u1043 \u1086 \u1084 \u1077 \u1083 \u1100 "\cf5 , \cf4 "\uc0\u1043 \u1086 \u1084 \u1077 \u1083 \u1100 \u1089 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\cf5 ,\
+  \cf4 "\uc0\u1052 \u1072 \u1075 \u1110 \u1083 \u1105 \u1118 "\cf5 , \cf4 "\uc0\u1052 \u1072 \u1075 \u1110 \u1083 \u1105 \u1118 \u1089 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\cf5 , \cf4 "\uc0\u1042 \u1110 \u1094 \u1077 \u1073 \u1089 \u1082 "\cf5 , \cf4 "\uc0\u1042 \u1110 \u1094 \u1077 \u1073 \u1089 \u1082 \u1072 \u1103  \u1074 \u1086 \u1073 \u1083 ."\
+\cf5 ];\
+\
+\cf2 const \cf5 List<String> cats = [\
+  \cf4 "\uc0\u1059 \u1089 \u1077 "\cf5 , \cf4 "\uc0\u1040 \u1076 \u1079 \u1077 \u1085 \u1085 \u1077 "\cf5 , \cf4 "\uc0\u1058 \u1101 \u1093 \u1085 \u1110 \u1082 \u1072 "\cf5 , \cf4 "\uc0\u1044 \u1079 \u1110 \u1094 \u1103 \u1095 \u1072 \u1077 "\cf5 , \cf4 "\uc0\u1044 \u1086 \u1084 "\cf5 , \cf4 "\uc0\u1055 \u1072 \u1089 \u1083 \u1091 \u1075 \u1110 "\cf5 , \cf4 "\uc0\u1056 \u1086 \u1079 \u1085 \u1072 \u1077 "\
+\cf5 ];\
+\
+\cf6 // \uc0\u1043 \u1083 \u1086 \u1073 \u1072 \u1083 \u1100 \u1085 \u1099 \u1081  \u1087 \u1077 \u1088 \u1077 \u1082 \u1083 \u1102 \u1095 \u1072 \u1090 \u1077 \u1083 \u1100  \u1090 \u1077 \u1084 \u1099 \
+\cf2 final \cf5 ValueNotifier<ThemeMode> themeNotifier = \cf7 ValueNotifier\cf5 (ThemeMode.\cf8 system\cf5 );\
+\
+\cf2 void \cf9 main\cf5 () \cf2 async \cf5 \{\
+  WidgetsFlutterBinding.
+\f1\i \cf7 ensureInitialized
+\f0\i0 \cf5 ();\
+  \cf2 await \cf5 Firebase.
+\f1\i \cf7 initializeApp
+\f0\i0 \cf5 ();\
+  runApp(\cf2 const \cf7 DzeApp\cf5 ());\
+\}\
+\
+\cf2 class \cf5 DzeApp \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 DzeApp(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 ValueListenableBuilder\cf5 <ThemeMode>(\
+      valueListenable: themeNotifier,\
+      builder: (_, mode, __) => \cf7 MaterialApp\cf5 (\
+        debugShowCheckedModeBanner: \cf2 false\cf5 ,\
+        title: \cf4 'DZE'\cf5 ,\
+        themeMode: mode,\
+        theme: \cf7 ThemeData\cf5 (\
+          useMaterial3: \cf2 true\cf5 ,\
+          colorSchemeSeed: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+          brightness: Brightness.\cf8 light\cf5 ,\
+          \cf6 // \uc0\u1048 \u1089 \u1087 \u1088 \u1072 \u1074 \u1083 \u1077 \u1085 \u1086 : CardThemeData \u1074 \u1084 \u1077 \u1089 \u1090 \u1086  CardTheme\
+          \cf5 cardTheme: \cf2 const \cf7 CardThemeData\cf5 (elevation: \cf11 2\cf5 ),\
+        ),\
+        darkTheme: \cf7 ThemeData\cf5 (\
+          useMaterial3: \cf2 true\cf5 ,\
+          colorSchemeSeed: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+          brightness: Brightness.\cf8 dark\cf5 ,\
+          cardTheme: \cf2 const \cf7 CardThemeData\cf5 (elevation: \cf11 2\cf5 ),\
+        ),\
+        home: \cf2 const \cf7 AuthWrapper\cf5 (),\
+      ),\
+    );\
+  \}\
+\}\
+\cf2 class \cf5 AuthWrapper \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 AuthWrapper(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 StreamBuilder\cf5 <User?>(\
+      stream: FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .authStateChanges(),\
+      builder: (context, s) \{\
+        \cf2 if \cf5 (s.\cf8 hasData\cf5 ) \{\
+          \cf2 final \cf5 uRef = FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(s.\cf8 data\cf5 !.\cf8 uid\cf5 );\
+\
+          uRef.get().then((doc) \{\
+            \cf2 if \cf5 (!doc.\cf8 exists\cf5 ) \{\
+              \cf6 // \uc0\u1043 \u1077 \u1085 \u1077 \u1088 \u1072 \u1094 \u1080 \u1103  \u1091 \u1085 \u1080 \u1082 \u1072 \u1083 \u1100 \u1085 \u1086 \u1075 \u1086  @username \u1087 \u1088 \u1080  \u1088 \u1077 \u1075 \u1080 \u1089 \u1090 \u1088 \u1072 \u1094 \u1080 \u1080 \
+              \cf5 String generatedTag = \cf4 "user_\cf5 $\{s.\cf8 data\cf5 !.\cf8 uid\cf5 .substring(\cf11 0\cf5 , \cf11 5\cf5 )\}\cf4 "\cf5 ;\
+\
+              uRef.set(\{\
+                \cf4 'points'\cf5 : \cf11 30\cf5 ,\
+                \cf4 'name'\cf5 : \cf4 '\uc0\u1053 \u1086 \u1074 \u1099  \u1089 \u1091 \u1089 \u1077 \u1076 '\cf5 ,\
+                \cf4 'username'\cf5 : generatedTag,\
+                \cf4 'uid'\cf5 : s.\cf8 data\cf5 !.\cf8 uid\cf5 ,\
+                \cf4 'email'\cf5 : s.\cf8 data\cf5 !.\cf8 email\cf5 ,\
+                \cf4 'avatar'\cf5 : \cf2 null\cf5 ,\
+                \cf4 'avgRating'\cf5 : \cf11 5.0\cf5 ,\
+                \cf4 'revCount'\cf5 : \cf11 0\cf5 ,\
+                \cf4 'ratingSum'\cf5 : \cf11 0.0\cf5 ,\
+                \cf4 'regDate'\cf5 : FieldValue.
+\f1\i \cf7 serverTimestamp
+\f0\i0 \cf5 (),\
+              \}, \cf7 SetOptions\cf5 (merge: \cf2 true\cf5 ));\
+            \}\
+          \});\
+          \cf2 return const \cf7 DzeSuperApp\cf5 ();\
+        \}\
+        \cf2 return const \cf7 EmailAuthScreen\cf5 ();\
+      \},\
+    );\
+  \}\
+\}\
+\cf2 class \cf5 EmailAuthScreen \cf2 extends \cf5 StatefulWidget \{\
+  \cf2 const \cf5 EmailAuthScreen(\{\cf2 super\cf5 .key\});\
+  \cf10 @override \cf5 State<EmailAuthScreen> \cf7 createState\cf5 () => \cf7 _EmailAuthScreenState\cf5 ();\
+\}\
+\
+\cf2 class \cf5 _EmailAuthScreenState \cf2 extends \cf5 State<EmailAuthScreen> \{\
+  \cf2 final \cf8 _e \cf5 = \cf7 TextEditingController\cf5 ();\
+  \cf2 final \cf8 _p \cf5 = \cf7 TextEditingController\cf5 ();\
+  bool \cf8 _isReg \cf5 = \cf2 false\cf5 ;\
+  bool \cf8 _agreed \cf5 = \cf2 false\cf5 ;\
+\
+  \cf2 void \cf7 _submit\cf5 () \cf2 async \cf5 \{\
+    \cf2 if \cf5 (!\cf8 _agreed\cf5 ) \{\
+      ScaffoldMessenger.
+\f1\i \cf7 of
+\f0\i0 \cf5 (\cf8 context\cf5 ).showSnackBar(\cf2 const \cf7 SnackBar\cf5 (content: \cf7 Text\cf5 (\cf4 "\uc0\u1047 \u1075 \u1072 \u1076 \u1079 \u1110 \u1094 \u1077 \u1089 \u1103  \u1079  \u1087 \u1072 \u1083 \u1110 \u1090 \u1099 \u1082 \u1072 \u1081  \u1082 \u1072 \u1085 \u1092 \u1110 \u1076 \u1101 \u1085 \u1094 \u1099 \u1103 \u1083 \u1100 \u1085 \u1072 \u1089 \u1094 \u1110  (\u1047 \u1072 \u1082 \u1086 \u1085  \u8470 99-\u1047 )"\cf5 )));\
+      \cf2 return\cf5 ;\
+    \}\
+    \cf2 if \cf5 (\cf8 _e\cf5 .\cf8 text\cf5 .\cf8 isEmpty \cf5 || \cf8 _p\cf5 .\cf8 text\cf5 .\cf8 isEmpty\cf5 ) \cf2 return\cf5 ;\
+    \cf2 try \cf5 \{\
+      \cf2 if \cf5 (\cf8 _isReg\cf5 ) \{\
+        \cf2 await \cf5 FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .createUserWithEmailAndPassword(email: \cf8 _e\cf5 .\cf8 text\cf5 .trim(), password: \cf8 _p\cf5 .\cf8 text\cf5 .trim());\
+      \} \cf2 else \cf5 \{\
+        \cf2 await \cf5 FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .signInWithEmailAndPassword(email: \cf8 _e\cf5 .\cf8 text\cf5 .trim(), password: \cf8 _p\cf5 .\cf8 text\cf5 .trim());\
+      \}\
+    \} \cf2 catch \cf5 (e) \{\
+      ScaffoldMessenger.
+\f1\i \cf7 of
+\f0\i0 \cf5 (\cf8 context\cf5 ).showSnackBar(\cf7 SnackBar\cf5 (content: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1084 \u1099 \u1083 \u1082 \u1072 : \cf5 $\{e.toString()\}\cf4 "\cf5 )));\
+    \}\
+  \}\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) => \cf7 Scaffold\cf5 (\
+      body: \cf7 Center\cf5 (child: \cf7 SingleChildScrollView\cf5 (padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 30\cf5 ), child: \cf7 Column\cf5 (children: [\
+        \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 location_on
+\f0\i0 \cf5 , size: \cf11 80\cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ),\
+        \cf2 const \cf7 Text\cf5 (\cf4 "DZE"\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 50\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 )),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 40\cf5 ),\
+        \cf7 TextField\cf5 (controller: \cf8 _e\cf5 , decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "Email"\cf5 , border: \cf7 OutlineInputBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 all\cf5 (\cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 15\cf5 ))))),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 15\cf5 ),\
+        \cf7 TextField\cf5 (controller: \cf8 _p\cf5 , obscureText: \cf2 true\cf5 , decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1055 \u1072 \u1088 \u1086 \u1083 \u1100 "\cf5 , border: \cf7 OutlineInputBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 all\cf5 (\cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 15\cf5 ))))),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 10\cf5 ),\
+        \cf7 Row\cf5 (children: [\
+          \cf7 Checkbox\cf5 (value: \cf8 _agreed\cf5 , onChanged: (v) => setState(() => \cf8 _agreed \cf5 = v!)),\
+          \cf7 Expanded\cf5 (child: \cf7 GestureDetector\cf5 (\
+            onTap: () => _showPolicy(context),\
+            child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1071  \u1079 \u1075 \u1072 \u1076 \u1078 \u1072 \u1102 \u1089 \u1103  \u1079  \u1055 \u1072 \u1083 \u1110 \u1090 \u1099 \u1082 \u1072 \u1081  (\u1047 \u1072 \u1082 \u1086 \u1085  \u8470 99-\u1047  \u1056 \u1041 )"\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 11\cf5 , color: Colors.
+\f1\i \cf8 blue
+\f0\i0 \cf5 , decoration: TextDecoration.
+\f1\i \cf8 underline
+\f0\i0 \cf5 )),\
+          ))\
+        ]),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 20\cf5 ),\
+        \cf7 SizedBox\cf5 (width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , height: \cf11 60\cf5 , child: \cf7 ElevatedButton\cf5 (onPressed: \cf7 _submit\cf5 , child: \cf7 Text\cf5 (\cf8 _isReg \cf5 ? \cf4 "\uc0\u1057 \u1058 \u1042 \u1040 \u1056 \u1067 \u1062 \u1068  \u1040 \u1050 \u1050 \u1040 \u1038 \u1053 \u1058 " \cf5 : \cf4 "\uc0\u1059 \u1042 \u1040 \u1049 \u1057 \u1062 \u1030 "\cf5 ))),\
+        \cf7 TextButton\cf5 (onPressed: () => setState(() => \cf8 _isReg \cf5 = !\cf8 _isReg\cf5 ), child: \cf7 Text\cf5 (\cf8 _isReg \cf5 ? \cf4 "\uc0\u1059 \u1078 \u1086  \u1105 \u1089 \u1094 \u1100  \u1087 \u1088 \u1086 \u1092 \u1110 \u1083 \u1100 ? \u1059 \u1074 \u1072 \u1081 \u1089 \u1094 \u1110 " \cf5 : \cf4 "\uc0\u1056 \u1101 \u1075 \u1110 \u1089 \u1090 \u1088 \u1072 \u1094 \u1099 \u1103 "\cf5 ))\
+      ])))\
+  );\
+\
+  \cf2 void \cf7 _showPolicy\cf5 (BuildContext context) \{\
+    showDialog(context: context, builder: (c) => \cf7 AlertDialog\cf5 (\
+      title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1050 \u1072 \u1085 \u1092 \u1110 \u1076 \u1101 \u1085 \u1094 \u1099 \u1103 \u1083 \u1100 \u1085 \u1072 \u1089 \u1094 \u1100 "\cf5 ),\
+      content: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1047 \u1075 \u1086 \u1076 \u1085 \u1072  \u1079  \u1047 \u1072 \u1082 \u1086 \u1085 \u1072 \u1084  \u1056 \u1041  \u8470 99-\u1047 , \u1084 \u1099  \u1079 \u1073 \u1110 \u1088 \u1072 \u1077 \u1084  \u1074 \u1072 \u1096  email \u1090 \u1086 \u1083 \u1100 \u1082 \u1110  \u1076 \u1083 \u1103  \u1087 \u1088 \u1072 \u1094 \u1099  \u1087 \u1088 \u1099 \u1082 \u1083 \u1072 \u1076 \u1072 \u1085 \u1085 \u1103 . \u1044 \u1072 \u1076 \u1079 \u1077 \u1085 \u1099 \u1103  \u1085 \u1077  \u1087 \u1077 \u1088 \u1072 \u1076 \u1072 \u1102 \u1094 \u1094 \u1072  \u1090 \u1088 \u1101 \u1094 \u1110 \u1084  \u1072 \u1089 \u1086 \u1073 \u1072 \u1084 ."\cf5 ),\
+      actions: [\cf7 TextButton\cf5 (onPressed: () => Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (c), child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1044 \u1086 \u1073 \u1088 \u1072 "\cf5 ))],\
+    ));\
+  \}\
+\}\
+\
+\cf2 class \cf5 DzeSuperApp \cf2 extends \cf5 StatefulWidget \{\
+  \cf2 const \cf5 DzeSuperApp(\{\cf2 super\cf5 .key\});\
+  \cf10 @override \cf5 State<DzeSuperApp> \cf7 createState\cf5 () => \cf7 _DzeSuperAppState\cf5 ();\
+\}\
+\
+\cf2 class \cf5 _DzeSuperAppState \cf2 extends \cf5 State<DzeSuperApp> \{\
+  int \cf8 _idx \cf5 = \cf11 0\cf5 ;\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 final \cf5 pages = [\
+      \cf2 const \cf7 HomeTab\cf5 (),\
+      \cf2 const \cf7 AdsListTab\cf5 (),\
+      \cf2 const \cf7 FavoritesTab\cf5 (),\
+      \cf2 const \cf7 ChatsListTab\cf5 (),\
+      \cf2 const \cf7 ProfileTab\cf5 (),\
+    ];\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      body: \cf7 IndexedStack\cf5 (index: \cf8 _idx\cf5 , children: pages),\
+      bottomNavigationBar: \cf7 NavigationBar\cf5 (\
+        selectedIndex: \cf8 _idx\cf5 ,\
+        onDestinationSelected: (i) => setState(() => \cf8 _idx \cf5 = i),\
+        destinations: \cf2 const \cf5 [\
+          \cf7 NavigationDestination\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 home_rounded
+\f0\i0 \cf5 ), label: \cf4 '\uc0\u1043 \u1072 \u1083 \u1086 \u1118 \u1085 \u1072 \u1103 '\cf5 ),\
+          \cf7 NavigationDestination\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 search_rounded
+\f0\i0 \cf5 ), label: \cf4 '\uc0\u1055 \u1086 \u1096 \u1091 \u1082 '\cf5 ),\
+          \cf7 NavigationDestination\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 favorite_rounded
+\f0\i0 \cf5 ), label: \cf4 '\uc0\u1040 \u1073 \u1088 \u1072 \u1085 \u1072 \u1077 '\cf5 ),\
+          \cf7 NavigationDestination\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 chat_bubble_outline
+\f0\i0 \cf5 ), label: \cf4 '\uc0\u1063 \u1072 \u1090 \u1099 '\cf5 ),\
+          \cf7 NavigationDestination\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 face_retouching_natural
+\f0\i0 \cf5 ), label: \cf4 '\uc0\u1071 '\cf5 ),\
+        ],\
+      ),\
+      floatingActionButton: (\cf8 _idx \cf5 <= \cf11 1\cf5 ) ? \cf7 FloatingActionButton\cf5 .\cf7 large\cf5 (\
+        onPressed: () => showAddFullscreen(context),\
+        backgroundColor: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+        foregroundColor: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 ,\
+        child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 add_rounded
+\f0\i0 \cf5 , size: \cf11 40\cf5 ),\
+      ) : \cf2 null\cf5 ,\
+    );\
+  \}\
+\}\
+\cf2 class \cf5 HomeTab \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 HomeTab(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 CustomScrollView\cf5 (\
+      slivers: [\
+        \cf6 // --- \uc0\u1043 \u1030 \u1043 \u1040 \u1053 \u1062 \u1050 \u1040 \u1071  \u1064 \u1040 \u1055 \u1050 \u1040  \u1047  \u1051 \u1040 \u1043 \u1040 \u1058 \u1067 \u1055 \u1040 \u1052  ---\
+        \cf7 SliverAppBar\cf5 .\cf7 large\cf5 (\
+          expandedHeight: \cf11 280\cf5 , \cf6 // \uc0\u1055 \u1072 \u1074 \u1103 \u1083 \u1110 \u1095 \u1072 \u1085 \u1072  \u1076 \u1083 \u1103  \u1084 \u1072 \u1082 \u1089 \u1110 \u1084 \u1072 \u1083 \u1100 \u1085 \u1072 \u1075 \u1072  \u1087 \u1072 \u1084 \u1077 \u1088 \u1091  \u1083 \u1072 \u1075 \u1072 \u1090 \u1099 \u1087 \u1072 \
+          \cf5 backgroundColor: Theme.
+\f1\i \cf7 of
+\f0\i0 \cf5 (context).\cf8 scaffoldBackgroundColor\cf5 ,\
+          flexibleSpace: \cf7 FlexibleSpaceBar\cf5 (\
+            centerTitle: \cf2 true\cf5 ,\
+            titlePadding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 only\cf5 (bottom: \cf11 20\cf5 ),\
+            title: \cf7 Column\cf5 (\
+              mainAxisAlignment: MainAxisAlignment.\cf8 end\cf5 ,\
+              mainAxisSize: MainAxisSize.\cf8 min\cf5 ,\
+              children: [\
+                \cf6 // \uc0\u1051 \u1072 \u1075 \u1072 \u1090 \u1099 \u1087  \u1087 \u1072 \u1074 \u1103 \u1083 \u1110 \u1095 \u1072 \u1085 \u1099  \u1118  2 \u1088 \u1072 \u1079 \u1099 \
+                \cf7 Image\cf5 .\cf7 asset\cf5 (\
+                  \cf4 'lib/assets/logo.png'\cf5 ,\
+                  height: \cf11 130\cf5 ,\
+                  errorBuilder: (c, e, s) => \cf2 const \cf7 Text\cf5 (\
+                      \cf4 "DZE"\cf5 ,\
+                      style: \cf7 TextStyle\cf5 (\
+                          fontWeight: FontWeight.
+\f1\i \cf8 w900
+\f0\i0 \cf5 , \cf6 // \uc0\u1042 \u1099 \u1087 \u1088 \u1072 \u1118 \u1083 \u1077 \u1085 \u1072  FontWeight.black\
+                          \cf5 fontSize: \cf11 60\cf5 ,\
+                          color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+                          letterSpacing: \cf11 6\
+                      \cf5 )\
+                  ),\
+                ),\
+                \cf2 const \cf7 SizedBox\cf5 (height: \cf11 8\cf5 ),\
+                \cf2 const \cf7 Text\cf5 (\
+                    \cf4 "\uc0\u1058 \u1042 \u1054 \u1049  \u1057 \u1059 \u1057 \u1045 \u1044  \u1058 \u1059 \u1058 "\cf5 ,\
+                    style: \cf7 TextStyle\cf5 (fontSize: \cf11 11\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 w400
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , letterSpacing: \cf11 2\cf5 )\
+                ),\
+              ],\
+            ),\
+          ),\
+        ),\
+\
+        \cf6 // --- \uc0\u1047 \u1040 \u1043 \u1040 \u1051 \u1054 \u1042 \u1040 \u1050  \u1056 \u1069 \u1050 \u1040 \u1052 \u1045 \u1053 \u1044 \u1040 \u1062 \u1067 \u1049  ---\
+        \cf2 const \cf7 SliverToBoxAdapter\cf5 (\
+          child: \cf7 Padding\cf5 (\
+            padding: \cf7 EdgeInsets\cf5 .\cf7 fromLTRB\cf5 (\cf11 20\cf5 , \cf11 25\cf5 , \cf11 20\cf5 , \cf11 10\cf5 ),\
+            child: \cf7 Row\cf5 (\
+              children: [\
+                \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 auto_awesome
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , size: \cf11 22\cf5 ),\
+                \cf7 SizedBox\cf5 (width: \cf11 10\cf5 ),\
+                \cf7 Text\cf5 (\
+                    \cf4 "\uc0\u1056 \u1072 \u1079 \u1091 \u1084 \u1085 \u1099 \u1103  \u1088 \u1101 \u1082 \u1072 \u1084 \u1077 \u1085 \u1076 \u1072 \u1094 \u1099 \u1110 "\cf5 ,\
+                    style: \cf7 TextStyle\cf5 (fontSize: \cf11 22\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )\
+                ),\
+              ],\
+            ),\
+          ),\
+        ),\
+\
+        \cf6 // --- \uc0\u1051 \u1054 \u1043 \u1030 \u1050 \u1040  \u1056 \u1040 \u1047 \u1059 \u1052 \u1053 \u1040 \u1049  \u1057 \u1058 \u1059 \u1046 \u1050 \u1030  ---\
+\
+        // --- \uc0\u1051 \u1054 \u1043 \u1030 \u1050 \u1040  \u1056 \u1040 \u1047 \u1059 \u1052 \u1053 \u1040 \u1049  \u1057 \u1058 \u1059 \u1046 \u1050 \u1030  ---\
+        \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+          stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+              .where(\cf4 'status'\cf5 , isEqualTo: \cf4 'active'\cf5 )\
+              .snapshots(),\
+          builder: (context, snap) \{\
+            \cf2 if \cf5 (snap.\cf8 hasError\cf5 ) \cf2 return const \cf7 SliverToBoxAdapter\cf5 (child: \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1084 \u1099 \u1083 \u1082 \u1072  \u1079 \u1072 \u1075 \u1088 \u1091 \u1079 \u1082 \u1110 "\cf5 )));\
+            \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 SliverToBoxAdapter\cf5 (child: \cf7 Center\cf5 (child: \cf7 LinearProgressIndicator\cf5 ()));\
+\
+            \cf6 // \uc0\u1057 \u1086 \u1079 \u1076 \u1072 \u1077 \u1084  \u1082 \u1086 \u1087 \u1080 \u1102  \u1089 \u1087 \u1080 \u1089 \u1082 \u1072 , \u1095 \u1090 \u1086 \u1073 \u1099  Flutter \u1085 \u1077  \u1088 \u1091 \u1075 \u1072 \u1083 \u1089 \u1103  \u1085 \u1072  \u1089 \u1086 \u1088 \u1090 \u1080 \u1088 \u1086 \u1074 \u1082 \u1091 \
+            \cf5 List<QueryDocumentSnapshot> docs = \cf7 List\cf5 .\cf7 from\cf5 (snap.\cf8 data\cf5 !.\cf8 docs\cf5 );\
+\
+            \cf6 // \uc0\u1041 \u1045 \u1047 \u1054 \u1055 \u1040 \u1057 \u1053 \u1040 \u1071  \u1057 \u1054 \u1056 \u1058 \u1048 \u1056 \u1054 \u1042 \u1050 \u1040 \
+            \cf5 docs.sort((a, b) \{\
+              \cf2 final \cf5 d1 = a.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+              \cf2 final \cf5 d2 = b.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+\
+              double calculateScore(Map<String, \cf2 dynamic\cf5 > data) \{\
+                double score = \cf11 0.0\cf5 ;\
+\
+                \cf6 // \uc0\u1058 \u1054 \u1055  \u1089 \u1090 \u1072 \u1090 \u1091 \u1089  (\u1073 \u1077 \u1079 \u1086 \u1087 \u1072 \u1089 \u1085 \u1072 \u1103  \u1087 \u1088 \u1086 \u1074 \u1077 \u1088 \u1082 \u1072 )\
+                \cf2 if \cf5 (data[\cf4 'isTop'\cf5 ] == \cf2 true\cf5 ) score += \cf11 5000.0\cf5 ;\
+\
+                \cf6 // \uc0\u1055 \u1088 \u1086 \u1089 \u1084 \u1086 \u1090 \u1088 \u1099 : \u1087 \u1088 \u1080 \u1074 \u1086 \u1076 \u1080 \u1084  \u1082  double, \u1076 \u1072 \u1078 \u1077  \u1077 \u1089 \u1083 \u1080  \u1074  \u1073 \u1072 \u1079 \u1077  int\
+                \cf2 var \cf5 views = data[\cf4 'views'\cf5 ] ?? \cf11 0\cf5 ;\
+                score += (views \cf2 is \cf5 num ? views.toDouble() : \cf11 0.0\cf5 ) * \cf11 10.0\cf5 ;\
+\
+                \cf6 // \uc0\u1054 \u1087 \u1080 \u1089 \u1072 \u1085 \u1080 \u1077 : \u1087 \u1088 \u1086 \u1074 \u1077 \u1088 \u1103 \u1077 \u1084  \u1085 \u1072  \u1076 \u1083 \u1080 \u1085 \u1091  \u1090 \u1077 \u1082 \u1089 \u1090 \u1072 \
+                \cf2 var \cf5 desc = data[\cf4 'desc'\cf5 ]?.toString() ?? \cf4 ""\cf5 ;\
+                score += desc.\cf8 length \cf5 / \cf11 2.0\cf5 ;\
+\
+                \cf2 return \cf5 score;\
+              \}\
+\
+              \cf2 return \cf5 calculateScore(d2).compareTo(calculateScore(d1));\
+            \});\
+\
+            \cf2 if \cf5 (docs.\cf8 isEmpty\cf5 ) \{\
+              \cf2 return const \cf7 SliverToBoxAdapter\cf5 (\
+                child: \cf7 Center\cf5 (child: \cf7 Padding\cf5 (\
+                  padding: \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 50.0\cf5 ),\
+                  child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1082 \u1091 \u1083 \u1100  \u1085 \u1103 \u1084 \u1072  \u1072 \u1082 \u1090 \u1099 \u1118 \u1085 \u1099 \u1093  \u1087 \u1088 \u1072 \u1087 \u1072 \u1085 \u1086 \u1118 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 )),\
+                )),\
+              );\
+            \}\
+\
+            \cf2 return \cf7 SliverList\cf5 (\
+                delegate: \cf7 SliverChildBuilderDelegate\cf5 (\
+                        (c, i) => \cf7 AdCard\cf5 (d: docs[i]),\
+                    childCount: docs.\cf8 length\
+                \cf5 )\
+            );\
+          \},\
+        ),\
+\
+\
+        \cf6 // \uc0\u1042 \u1086 \u1076 \u1089 \u1090 \u1091 \u1087  \u1076 \u1083 \u1103  \u1087 \u1083 \u1072 \u1074 \u1072 \u1102 \u1095 \u1072 \u1081  \u1082 \u1085 \u1086 \u1087 \u1082 \u1110 \
+        \cf2 const \cf7 SliverToBoxAdapter\cf5 (child: \cf7 SizedBox\cf5 (height: \cf11 120\cf5 )),\
+      ],\
+    );\
+  \}\
+\}\
+\cf2 class \cf5 AdCard \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 final \cf5 DocumentSnapshot \cf8 d\cf5 ;\
+  \cf2 const \cf5 AdCard(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 d\cf5 \});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf6 // \uc0\u1041 \u1077 \u1079 \u1086 \u1087 \u1072 \u1089 \u1085 \u1086 \u1077  \u1087 \u1086 \u1083 \u1091 \u1095 \u1077 \u1085 \u1080 \u1077  \u1076 \u1072 \u1085 \u1085 \u1099 \u1093 \
+    \cf2 final \cf5 data = \cf8 d\cf5 .data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+    \cf2 final \cf5 bool isTop = data[\cf4 'isTop'\cf5 ] ?? \cf2 false\cf5 ;\
+    \cf2 final \cf5 String authorName = data[\cf4 'authorName'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 ;\
+    \cf2 final \cf5 String username = data[\cf4 'username'\cf5 ] ?? \cf4 "user"\cf5 ;\
+\
+    \cf2 return \cf7 GestureDetector\cf5 (\
+      onTap: () \{\
+        \cf6 // \uc0\u1041 \u1077 \u1079 \u1086 \u1087 \u1072 \u1089 \u1085 \u1099 \u1081  \u1080 \u1085 \u1082 \u1088 \u1077 \u1084 \u1077 \u1085 \u1090  \u1087 \u1088 \u1086 \u1089 \u1084 \u1086 \u1090 \u1088 \u1086 \u1074 \
+        \cf8 d\cf5 .\cf8 reference\cf5 .update(\{\cf4 'views'\cf5 : FieldValue.
+\f1\i \cf7 increment
+\f0\i0 \cf5 (\cf11 1\cf5 )\});\
+        Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 DetailScreen\cf5 (ad: \cf8 d\cf5 )));\
+      \},\
+      child: \cf7 Container\cf5 (\
+        margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 20\cf5 , vertical: \cf11 12\cf5 ),\
+        decoration: \cf7 BoxDecoration\cf5 (\
+          borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 30\cf5 ),\
+          color: Theme.
+\f1\i \cf7 of
+\f0\i0 \cf5 (context).\cf8 cardColor\cf5 ,\
+          border: isTop ? \cf7 Border\cf5 .\cf7 all\cf5 (color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , width: \cf11 2.5\cf5 ) : \cf2 null\cf5 ,\
+          boxShadow: [\
+            \cf7 BoxShadow\cf5 (\
+                color: Colors.
+\f1\i \cf8 black
+\f0\i0 \cf5 .withAlpha(\cf11 15\cf5 ),\
+                blurRadius: \cf11 15\cf5 ,\
+                offset: \cf2 const \cf7 Offset\cf5 (\cf11 0\cf5 , \cf11 8\cf5 )\
+            )\
+          ],\
+        ),\
+        child: \cf7 Column\cf5 (\
+          crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 ,\
+          children: [\
+            \cf2 if \cf5 (isTop) _buildTopBadge(),\
+            _buildImageSection(data, isTop),\
+            _buildInfoSection(context, data, authorName, username),\
+          ],\
+        ),\
+      ),\
+    );\
+  \}\
+  Widget \cf7 _buildTopBadge\cf5 () => \cf7 Container\cf5 (\
+    width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (vertical: \cf11 6\cf5 ),\
+    decoration: \cf2 const \cf7 BoxDecoration\cf5 (\
+        color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 ,\
+        borderRadius: \cf7 BorderRadius\cf5 .\cf7 vertical\cf5 (top: \cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 28\cf5 ))\
+    ),\
+    child: \cf2 const \cf7 Center\cf5 (\
+        child: \cf7 Text\cf5 (\cf4 "\uc0\u1058 \u1054 \u1055  \u1055 \u1056 \u1040 \u1055 \u1040 \u1053 \u1054 \u1042 \u1040 "\cf5 ,\
+            style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 , fontSize: \cf11 11\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 w900
+\f0\i0 \cf5 , letterSpacing: \cf11 1\cf5 ))\
+    ),\
+  );\
+\
+  Widget \cf7 _buildImageSection\cf5 (Map<String, \cf2 dynamic\cf5 > data, bool isTop) \{\
+    \cf6 // FIX: \uc0\u1041 \u1077 \u1079 \u1086 \u1087 \u1072 \u1089 \u1085 \u1086  \u1076 \u1086 \u1089 \u1090 \u1072 \u1077 \u1084  \u1082 \u1072 \u1088 \u1090 \u1080 \u1085 \u1082 \u1091  (\u1093 \u1086 \u1090 \u1100  \u1080 \u1079  \u1084 \u1072 \u1089 \u1089 \u1080 \u1074 \u1072 , \u1093 \u1086 \u1090 \u1100  \u1080 \u1079  \u1089 \u1090 \u1088 \u1086 \u1082 \u1080 )\
+    \cf2 dynamic \cf5 imgData = data[\cf4 'img'\cf5 ];\
+    String? base64String;\
+\
+    \cf2 if \cf5 (imgData \cf2 is \cf5 List && imgData.\cf8 isNotEmpty\cf5 ) \{\
+      base64String = imgData[\cf11 0\cf5 ].toString();\
+    \} \cf2 else if \cf5 (imgData \cf2 is \cf5 String && imgData.\cf8 isNotEmpty\cf5 ) \{\
+      base64String = imgData;\
+    \}\
+\
+    \cf2 if \cf5 (base64String == \cf2 null\cf5 ) \{\
+      \cf2 return \cf7 Container\cf5 (\
+        height: \cf11 230\cf5 , width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 ,\
+        decoration: \cf7 BoxDecoration\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 .\cf8 shade100\cf5 , borderRadius: \cf7 BorderRadius\cf5 .\cf7 vertical\cf5 (top: \cf7 Radius\cf5 .\cf7 circular\cf5 (isTop ? \cf11 0 \cf5 : \cf11 30\cf5 ))),\
+        child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 image_outlined
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , size: \cf11 50\cf5 ),\
+      );\
+    \}\
+\
+    \cf2 return \cf7 ClipRRect\cf5 (\
+      borderRadius: \cf7 BorderRadius\cf5 .\cf7 vertical\cf5 (top: \cf7 Radius\cf5 .\cf7 circular\cf5 (isTop ? \cf11 0 \cf5 : \cf11 30\cf5 ), bottom: \cf2 const \cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 10\cf5 )),\
+      child: \cf7 Image\cf5 .\cf7 memory\cf5 (\
+        base64Decode(base64String),\
+        height: \cf11 230\cf5 , width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , fit: BoxFit.\cf8 cover\cf5 ,\
+        errorBuilder: (c, e, s) => \cf7 Container\cf5 (\
+          height: \cf11 230\cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 .\cf8 shade200\cf5 ,\
+          child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 broken_image
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 ),\
+        ),\
+      ),\
+    );\
+  \}\
+\
+  Widget \cf7 _buildInfoSection\cf5 (BuildContext context, Map data, String name, String user) => \cf7 Padding\cf5 (\
+    padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 20\cf5 ),\
+    child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+      \cf7 Text\cf5 (data[\cf4 'title'\cf5 ] ?? \cf4 "\uc0\u1041 \u1077 \u1079  \u1085 \u1072 \u1079 \u1074 \u1099 "\cf5 ,\
+          style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 20\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 , letterSpacing: -\cf11 0.5\cf5 )),\
+      \cf2 const \cf7 SizedBox\cf5 (height: \cf11 10\cf5 ),\
+      \cf7 Row\cf5 (children: [\
+        \cf7 GestureDetector\cf5 (\
+          onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 PublicProfile\cf5 (uid: data[\cf4 'uid'\cf5 ] ?? \cf4 ""\cf5 ))),\
+          child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+            \cf7 Text\cf5 (name, style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 , fontSize: \cf11 14\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+            \cf7 Text\cf5 (\cf4 "@\cf5 $user\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , fontSize: \cf11 12\cf5 )),\
+          ]),\
+        ),\
+        \cf2 const \cf7 Spacer\cf5 (),\
+        _buildRating(data[\cf4 'authorRate'\cf5 ]),\
+      ]),\
+    ]),\
+  );\
+\
+  Widget \cf7 _buildRating\cf5 (\cf2 dynamic \cf5 rate) => \cf7 Container\cf5 (\
+    padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 10\cf5 , vertical: \cf11 5\cf5 ),\
+    decoration: \cf7 BoxDecoration\cf5 (color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 .withAlpha(\cf11 20\cf5 ), borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 12\cf5 )),\
+    child: \cf7 Row\cf5 (children: [\
+      \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 star
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , size: \cf11 14\cf5 ),\
+      \cf7 Text\cf5 (\cf4 " \cf5 $\{(rate ?? \cf11 5.0\cf5 ).toStringAsFixed(\cf11 1\cf5 )\}\cf4 "\cf5 ,\
+          style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , fontSize: \cf11 13\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+    ]),\
+  );\
+\} \cf6 // \uc0\u1050 \u1086 \u1085 \u1077 \u1094  \u1082 \u1083 \u1072 \u1089 \u1089 \u1072 \
+\
+// --- \uc0\u1044 \u1069 \u1058 \u1040 \u1051 \u1030  \u1040 \u1041 '\u1071 \u1042 \u1067  ---\
+\cf2 class \cf5 DetailScreen \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 final \cf5 DocumentSnapshot \cf8 ad\cf5 ;\
+  \cf2 const \cf5 DetailScreen(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 ad\cf5 \});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf6 // \uc0\u1041 \u1077 \u1079 \u1086 \u1087 \u1072 \u1089 \u1085 \u1086 \u1077  \u1087 \u1086 \u1083 \u1091 \u1095 \u1077 \u1085 \u1080 \u1077  \u1076 \u1072 \u1085 \u1085 \u1099 \u1093 \
+    \cf2 final \cf5 data = \cf8 ad\cf5 .data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+    \cf2 final \cf5 myUid = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 ?.\cf8 uid\cf5 ;\
+    \cf2 final \cf5 bool isMy = myUid == data[\cf4 'uid'\cf5 ];\
+\
+    \cf6 // \uc0\u1055 \u1088 \u1086 \u1074 \u1077 \u1088 \u1103 \u1077 \u1084  \u1080  images, \u1080  img (\u1085 \u1072  \u1074 \u1089 \u1103 \u1082 \u1080 \u1081  \u1089 \u1083 \u1091 \u1095 \u1072 \u1081 )\
+    \cf2 final \cf5 List imgList = (data[\cf4 'images'\cf5 ] \cf2 is \cf5 List) ? data[\cf4 'images'\cf5 ] :\
+    (data[\cf4 'img'\cf5 ] \cf2 is \cf5 List) ? data[\cf4 'img'\cf5 ] : [];\
+\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (\
+        title: \cf7 Text\cf5 (data[\cf4 'title'\cf5 ] ?? \cf4 "\uc0\u1040 \u1073 '\u1103 \u1074 \u1072 "\cf5 ),\
+        actions: [\
+          \cf2 if \cf5 (isMy) \cf7 IconButton\cf5 (\
+            icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 more_vert
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ),\
+            onPressed: () => _showDeleteDialog(context, \cf8 ad\cf5 ),\
+          ),\
+        ],\
+      ),\
+      body: \cf7 SingleChildScrollView\cf5 (\
+        child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+          \cf6 // 1. \uc0\u1057 \u1051 \u1040 \u1049 \u1044 \u1069 \u1056  \u1060 \u1054 \u1058 \u1040 \
+          \cf2 if \cf5 (imgList.\cf8 isNotEmpty\cf5 )\
+            \cf7 SizedBox\cf5 (\
+              height: \cf11 380\cf5 ,\
+              child: \cf7 Stack\cf5 (\
+                children: [\
+                  \cf7 PageView\cf5 .\cf7 builder\cf5 (\
+                    itemCount: imgList.\cf8 length\cf5 ,\
+                    itemBuilder: (c, i) => \cf7 Image\cf5 .\cf7 memory\cf5 (\
+                      base64Decode(imgList[i].toString()),\
+                      fit: BoxFit.\cf8 cover\cf5 ,\
+                      width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 ,\
+                      errorBuilder: (c,e,s) => \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 broken_image
+\f0\i0 \cf5 ),\
+                    ),\
+                  ),\
+                  \cf2 if \cf5 (imgList.\cf8 length \cf5 > \cf11 1\cf5 ) \cf7 Positioned\cf5 (\
+                    bottom: \cf11 20\cf5 , left: \cf11 0\cf5 , right: \cf11 0\cf5 ,\
+                    child: \cf7 Center\cf5 (child: \cf7 Container\cf5 (\
+                      padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 12\cf5 , vertical: \cf11 5\cf5 ),\
+                      decoration: \cf7 BoxDecoration\cf5 (color: Colors.
+\f1\i \cf8 black38
+\f0\i0 \cf5 , borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 20\cf5 )),\
+                      child: \cf7 Text\cf5 (\cf4 "\uc0\u1060 \u1086 \u1090 \u1072 : \cf5 $\{imgList.\cf8 length\cf5 \}\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 , fontSize: \cf11 12\cf5 )),\
+                    )),\
+                  )\
+                ],\
+              ),\
+            )\
+          \cf2 else\
+            \cf7 Container\cf5 (height: \cf11 300\cf5 , width: double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 .\cf8 shade200\cf5 ,\
+                child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 image_not_supported
+\f0\i0 \cf5 , size: \cf11 50\cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 )),\
+\
+          \cf7 Padding\cf5 (\
+            padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 25\cf5 ),\
+            child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+              \cf6 // 2. \uc0\u1047 \u1040 \u1043 \u1040 \u1051 \u1054 \u1042 \u1040 \u1050  \u1030  \u1051 \u1040 \u1049 \u1050 \
+              \cf7 Row\cf5 (children: [\
+                \cf7 Expanded\cf5 (child: \cf7 Text\cf5 (data[\cf4 'title'\cf5 ] ?? \cf4 "\uc0\u1041 \u1077 \u1079  \u1085 \u1072 \u1079 \u1074 \u1099 "\cf5 ,\
+                    style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 26\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 ))),\
+                \cf7 IconButton\cf5 (\
+                  icon: \cf7 Icon\cf5 (\
+                      (data[\cf4 'likes'\cf5 ] \cf2 as \cf5 List?)?.contains(myUid) ?? \cf2 false\
+                          \cf5 ? Icons.
+\f1\i \cf8 favorite 
+\f0\i0 \cf5 : Icons.
+\f1\i \cf8 favorite_border
+\f0\i0 \cf5 ,\
+                      color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 , size: \cf11 28\cf5 ),\
+                  onPressed: () \{\
+                    \cf2 if \cf5 (myUid != \cf2 null\cf5 ) _toggleLike(\cf8 ad\cf5 , myUid);\
+                  \},\
+                )\
+              ]),\
+\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 12\cf5 ),\
+\
+              \cf6 // 3. \uc0\u1030 \u1053 \u1060 \u1040  \u1055 \u1056 \u1040  \u1040 \u1038 \u1058 \u1040 \u1056 \u1040 \
+              \cf7 InkWell\cf5 (\
+                onTap: () \{\
+                  \cf2 if \cf5 (data[\cf4 'uid'\cf5 ] != \cf2 null\cf5 ) \{\
+                    Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 PublicProfile\cf5 (uid: data[\cf4 'uid'\cf5 ])));\
+                  \}\
+                \},\
+                child: \cf7 Row\cf5 (children: [\
+                  \cf7 CircleAvatar\cf5 (radius: \cf11 22\cf5 , backgroundColor: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 .withAlpha(\cf11 20\cf5 ),\
+                      child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 person
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 )),\
+                  \cf2 const \cf7 SizedBox\cf5 (width: \cf11 12\cf5 ),\
+                  \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+                    \cf7 Text\cf5 (data[\cf4 'authorName'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 ,\
+                        style: \cf2 const \cf7 TextStyle\cf5 (fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 , fontSize: \cf11 16\cf5 )),\
+                    \cf7 Text\cf5 (\cf4 "@\cf5 $\{data[\cf4 'username'\cf5 ] ?? \cf4 'user'\cf5 \}\cf4 "\cf5 ,\
+                        style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , fontSize: \cf11 13\cf5 )),\
+                  ]),\
+                ]),\
+              ),\
+\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 15\cf5 ),\
+              \cf7 Text\cf5 (\cf4 "\cf5 $\{data[\cf4 'city'\cf5 ] ?? \cf4 '\uc0\u1053 \u1077 \u1074 \u1103 \u1076 \u1086 \u1084 \u1072 '\cf5 \}\cf4  \'95 \cf5 $\{data[\cf4 'tag'\cf5 ] ?? \cf4 '\uc0\u1056 \u1086 \u1079 \u1085 \u1072 \u1077 '\cf5 \}\cf4 "\cf5 ,\
+                  style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , fontSize: \cf11 14\cf5 )),\
+\
+              \cf2 const \cf7 Divider\cf5 (height: \cf11 45\cf5 , thickness: \cf11 1\cf5 ),\
+\
+              \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1087 \u1110 \u1089 \u1072 \u1085 \u1085 \u1077 "\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 18\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 10\cf5 ),\
+              \cf7 Text\cf5 (data[\cf4 'desc'\cf5 ] ?? \cf4 "\uc0\u1053 \u1103 \u1084 \u1072  \u1072 \u1087 \u1110 \u1089 \u1072 \u1085 \u1085 \u1103 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 16\cf5 , height: \cf11 1.5\cf5 )),\
+\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 35\cf5 ),\
+\
+              \cf6 // 4. \uc0\u1050 \u1053 \u1054 \u1055 \u1050 \u1040  \u1063 \u1040 \u1058 \u1040  (\u1062 \u1071 \u1055 \u1045 \u1056  \u1055 \u1045 \u1056 \u1040 \u1044 \u1040 \u1045  ID \u1058 \u1040 \u1042 \u1040 \u1056 \u1040 )\
+              \cf2 if \cf5 (!isMy) \cf7 ElevatedButton\cf5 .\cf7 icon\cf5 (\
+                style: ElevatedButton.
+\f1\i \cf7 styleFrom
+\f0\i0 \cf5 (\
+                    minimumSize: \cf2 const \cf7 Size\cf5 (double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , \cf11 65\cf5 ),\
+                    shape: \cf7 RoundedRectangleBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 20\cf5 )),\
+                    backgroundColor: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+                    foregroundColor: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 ,\
+                    elevation: \cf11 0\
+                \cf5 ),\
+                onPressed: () \{\
+                  \cf2 if \cf5 (myUid != \cf2 null \cf5 && data[\cf4 'uid'\cf5 ] != \cf2 null\cf5 ) \{\
+                    _startChat(\
+                        context,\
+                        myUid,\
+                        data[\cf4 'uid'\cf5 ],\
+                        data[\cf4 'title'\cf5 ] ?? \cf4 "\uc0\u1040 \u1073 '\u1103 \u1074 \u1072 "\cf5 ,\
+                        \cf8 ad\cf5 .\cf8 id \cf6 // \uc0\u1042 \u1040 \u1046 \u1053 \u1040 : \u1087 \u1077 \u1088 \u1072 \u1076 \u1072 \u1077 \u1084  ID \u1076 \u1072 \u1082 \u1091 \u1084 \u1077 \u1085 \u1090 \u1072  \u1076 \u1083 \u1103  \u1089 \u1091 \u1074 \u1103 \u1079 \u1110 \
+                    \cf5 );\
+                  \}\
+                \},\
+                icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 chat_bubble_outline
+\f0\i0 \cf5 ),\
+                label: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1072 \u1087 \u1110 \u1089 \u1072 \u1094 \u1100  \u1089 \u1091 \u1089 \u1077 \u1076 \u1091 "\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 18\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+              ),\
+\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 50\cf5 ),\
+\
+              \cf6 // 5. \uc0\u1056 \u1069 \u1050 \u1040 \u1052 \u1045 \u1053 \u1044 \u1040 \u1062 \u1067 \u1030 \
+              \cf2 const \cf7 Row\cf5 (children: [\
+                \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 auto_awesome_motion_outlined
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , size: \cf11 22\cf5 ),\
+                \cf7 SizedBox\cf5 (width: \cf11 10\cf5 ),\
+                \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1076 \u1086 \u1073 \u1085 \u1099 \u1103  \u1087 \u1088 \u1072 \u1087 \u1072 \u1085 \u1086 \u1074 \u1099 "\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 19\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+              ]),\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 15\cf5 ),\
+\
+              \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+                stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+                    .where(\cf4 'tag'\cf5 , isEqualTo: data[\cf4 'tag'\cf5 ])\
+                    .where(\cf4 'status'\cf5 , isEqualTo: \cf4 'active'\cf5 )\
+                    .limit(\cf11 5\cf5 ).snapshots(),\
+                builder: (c, s) \{\
+                  \cf2 if \cf5 (!s.\cf8 hasData\cf5 ) \cf2 return const \cf7 LinearProgressIndicator\cf5 ();\
+                  \cf2 final \cf5 docs = s.\cf8 data\cf5 !.\cf8 docs\cf5 .where((doc) => doc.\cf8 id \cf5 != \cf8 ad\cf5 .\cf8 id\cf5 ).toList();\
+                  \cf2 if \cf5 (docs.\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1082 \u1091 \u1083 \u1100  \u1085 \u1103 \u1084 \u1072  \u1087 \u1072 \u1076 \u1086 \u1073 \u1085 \u1099 \u1093  \u1088 \u1101 \u1095 \u1072 \u1118 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 ));\
+                  \cf2 return \cf7 Column\cf5 (children: docs.map((doc) => \cf7 AdCard\cf5 (d: doc)).toList());\
+                \},\
+              ),\
+              \cf2 const \cf7 SizedBox\cf5 (height: \cf11 80\cf5 ),\
+            ]),\
+          ),\
+        ]),\
+      ),\
+    );\
+  \}\
+\
+  \cf2 void \cf7 _toggleLike\cf5 (DocumentSnapshot ad, String uid) \{\
+    \cf2 final \cf5 data = ad.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+    List likes = data[\cf4 'likes'\cf5 ] ?? [];\
+    \cf2 if \cf5 (likes.contains(uid)) \{\
+      ad.\cf8 reference\cf5 .update(\{\cf4 'likes'\cf5 : FieldValue.
+\f1\i \cf7 arrayRemove
+\f0\i0 \cf5 ([uid]), \cf4 'likesCount'\cf5 : FieldValue.
+\f1\i \cf7 increment
+\f0\i0 \cf5 (-\cf11 1\cf5 )\});\
+    \} \cf2 else \cf5 \{\
+      ad.\cf8 reference\cf5 .update(\{\cf4 'likes'\cf5 : FieldValue.
+\f1\i \cf7 arrayUnion
+\f0\i0 \cf5 ([uid]), \cf4 'likesCount'\cf5 : FieldValue.
+\f1\i \cf7 increment
+\f0\i0 \cf5 (\cf11 1\cf5 )\});\
+    \}\
+  \}\
+\}\
+\
+\cf6 // --- \uc0\u1055 \u1054 \u1064 \u1059 \u1050  (\u1042 \u1050 \u1051 \u1040 \u1044 \u1050 \u1040  \u8470 2) ---\
+\cf2 class \cf5 AdsListTab \cf2 extends \cf5 StatefulWidget \{\
+  \cf2 const \cf5 AdsListTab(\{\cf2 super\cf5 .key\});\
+  \cf10 @override\
+  \cf5 State<AdsListTab> \cf7 createState\cf5 () => \cf7 _AdsListTabState\cf5 ();\
+\}\
+\
+\cf2 class \cf5 _AdsListTabState \cf2 extends \cf5 State<AdsListTab> \{\
+  String \cf8 q \cf5 = \cf4 ""\cf5 ;\
+  String \cf8 sCity \cf5 = \cf4 "\uc0\u1059 \u1089 \u1077 "\cf5 ;\
+  String \cf8 sCat \cf5 = \cf4 "\uc0\u1059 \u1089 \u1077 "\cf5 ;\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (\
+        title: \cf7 TextField\cf5 (\
+          onChanged: (v) => setState(() => \cf8 q \cf5 = v.toLowerCase()),\
+          decoration: \cf2 const \cf7 InputDecoration\cf5 (\
+              hintText: \cf4 "\uc0\u1064 \u1091 \u1082 \u1072 \u1094 \u1100  \u1089 \u1091 \u1089 \u1077 \u1076 \u1072  \u1072 \u1073 \u1086  \u1088 \u1101 \u1095 ..."\cf5 ,\
+              border: InputBorder.
+\f1\i \cf8 none
+\f0\i0 \cf5 ,\
+              prefixIcon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 search
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 )\
+          ),\
+        ),\
+      ),\
+      body: \cf7 Column\cf5 (children: [\
+        \cf6 // \uc0\u1060 \u1110 \u1083 \u1100 \u1090 \u1088 \u1099  \u1087 \u1072  \u1075 \u1072 \u1088 \u1072 \u1076 \u1072 \u1093  \u1110  \u1082 \u1072 \u1090 \u1101 \u1075 \u1086 \u1088 \u1099 \u1103 \u1093 \
+        \cf7 SingleChildScrollView\cf5 (\
+          scrollDirection: Axis.\cf8 horizontal\cf5 ,\
+          padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 15\cf5 , vertical: \cf11 8\cf5 ),\
+          child: \cf7 Row\cf5 (children: [\
+            \cf7 ActionChip\cf5 (\
+                avatar: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 location_on
+\f0\i0 \cf5 , size: \cf11 16\cf5 ),\
+                label: \cf7 Text\cf5 (\cf8 sCity\cf5 ),\
+                onPressed: () => _pick(belarusRegions, (v) => setState(() => \cf8 sCity \cf5 = v))\
+            ),\
+            \cf2 const \cf7 SizedBox\cf5 (width: \cf11 10\cf5 ),\
+            \cf7 ActionChip\cf5 (\
+                avatar: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 category
+\f0\i0 \cf5 , size: \cf11 16\cf5 ),\
+                label: \cf7 Text\cf5 (\cf8 sCat\cf5 ),\
+                onPressed: () => _pick(cats, (v) => setState(() => \cf8 sCat \cf5 = v))\
+            ),\
+          ]),\
+        ),\
+\
+        \cf7 Expanded\cf5 (child: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+          \cf6 // \uc0\u1064 \u1059 \u1050 \u1040 \u1045 \u1052  \u1058 \u1054 \u1051 \u1068 \u1050 \u1030  \u1040 \u1050 \u1058 \u1067 \u1038 \u1053 \u1067 \u1071  (\u1040 \u1044 \u1054 \u1041 \u1056 \u1040 \u1053 \u1067 \u1071 ) \u1040 \u1041 '\u1071 \u1042 \u1067 \
+          \cf5 stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+              .where(\cf4 'status'\cf5 , isEqualTo: \cf4 'active'\cf5 ).snapshots(),\
+          builder: (c, snap) \{\
+            \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 CircularProgressIndicator\cf5 ());\
+\
+            \cf2 var \cf5 docs = snap.\cf8 data\cf5 !.\cf8 docs\cf5 .where((d) \{\
+              \cf2 var \cf5 data = d.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >;\
+              bool mT = data[\cf4 'title'\cf5 ].toString().toLowerCase().contains(\cf8 q\cf5 );\
+              bool mCi = \cf8 sCity \cf5 == \cf4 "\uc0\u1059 \u1089 \u1077 " \cf5 || data[\cf4 'city'\cf5 ].toString().contains(\cf8 sCity\cf5 );\
+              bool mCa = \cf8 sCat \cf5 == \cf4 "\uc0\u1059 \u1089 \u1077 " \cf5 || data[\cf4 'tag'\cf5 ] == \cf8 sCat\cf5 ;\
+              \cf2 return \cf5 mT && mCi && mCa;\
+            \}).toList();\
+\
+            \cf2 if \cf5 (docs.\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1110 \u1095 \u1086 \u1075 \u1072  \u1085 \u1077  \u1079 \u1085 \u1086 \u1081 \u1076 \u1079 \u1077 \u1085 \u1072  
+\f2 \uc0\u55357 \u56852 
+\f0 "\cf5 ));\
+\
+            \cf2 return \cf7 ListView\cf5 .\cf7 builder\cf5 (\
+                itemCount: docs.\cf8 length\cf5 ,\
+                itemBuilder: (ctx, i) => \cf7 AdCard\cf5 (d: docs[i])\
+            );\
+          \},\
+        )),\
+      ]),\
+    );\
+  \}\
+\
+  \cf2 void \cf7 _pick\cf5 (List<String> l, \cf2 Function\cf5 (String) onP) => showModalBottomSheet(\
+      context: \cf8 context\cf5 ,\
+      shape: \cf2 const \cf7 RoundedRectangleBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 vertical\cf5 (top: \cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 20\cf5 ))),\
+      builder: (c) => \cf7 ListView\cf5 (children: l.map((e) => \cf7 ListTile\cf5 (title: \cf7 Text\cf5 (e), onTap: () \{ onP(e); Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (c); \})).toList())\
+  );\
+\}\
+\
+\cf6 // --- \uc0\u1055 \u1040 \u1044 \u1040 \u1063 \u1040  \u1040 \u1041 '\u1071 \u1042 \u1067  (\u1040 \u1044 \u1055 \u1056 \u1040 \u1038 \u1050 \u1040  \u1053 \u1040  \u1052 \u1040 \u1044 \u1069 \u1056 \u1040 \u1062 \u1067 \u1070 ) ---\
+\cf2 void \cf9 showAddFullscreen\cf5 (BuildContext context) \{\
+  \cf2 final \cf5 t = \cf7 TextEditingController\cf5 (), d = \cf7 TextEditingController\cf5 (), rCtrl = \cf7 TextEditingController\cf5 ();\
+  List<String> images = [];\
+  String tag = cats[\cf11 1\cf5 ];\
+  String reg = belarusRegions[\cf11 0\cf5 ];\
+\
+  showModalBottomSheet(\
+    context: context, isScrollControlled: \cf2 true\cf5 , useSafeArea: \cf2 true\cf5 ,\
+    shape: \cf2 const \cf7 RoundedRectangleBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 vertical\cf5 (top: \cf7 Radius\cf5 .\cf7 circular\cf5 (\cf11 30\cf5 ))),\
+    builder: (ctx) => \cf7 StatefulBuilder\cf5 (builder: (ctx, setS) => \cf7 Container\cf5 (\
+      padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 25\cf5 ),\
+      child: \cf7 SingleChildScrollView\cf5 (child: \cf7 Column\cf5 (children: [\
+        \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1086 \u1074 \u1072 \u1103  \u1087 \u1088 \u1072 \u1087 \u1072 \u1085 \u1086 \u1074 \u1072 "\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 22\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 20\cf5 ),\
+\
+        \cf6 // \uc0\u1042 \u1099 \u1073 \u1072 \u1088  \u1092 \u1086 \u1090 \u1072  (\u1076 \u1072  5 \u1096 \u1090 \u1091 \u1082 )\
+        \cf7 SizedBox\cf5 (height: \cf11 120\cf5 , child: \cf7 ListView\cf5 (scrollDirection: Axis.\cf8 horizontal\cf5 , children: [\
+          \cf2 if \cf5 (images.\cf8 length \cf5 < \cf11 5\cf5 ) \cf7 GestureDetector\cf5 (\
+            onTap: () \cf2 async \cf5 \{\
+              \cf2 final \cf5 res = \cf2 await \cf7 ImagePicker\cf5 ().pickImage(source: ImageSource.\cf8 gallery\cf5 , imageQuality: \cf11 5\cf5 );\
+              \cf2 if \cf5 (res != \cf2 null\cf5 ) \{\
+                \cf2 final \cf5 bytes = \cf2 await \cf7 File\cf5 (res.\cf8 path\cf5 ).readAsBytes();\
+                setS(() => images.add(base64Encode(bytes)));\
+              \}\
+            \},\
+            child: \cf7 Container\cf5 (\
+              width: \cf11 110\cf5 , margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 only\cf5 (right: \cf11 10\cf5 ),\
+              decoration: \cf7 BoxDecoration\cf5 (color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 .withAlpha(\cf11 10\cf5 ), borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 25\cf5 ), border: \cf7 Border\cf5 .\cf7 all\cf5 (color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 .withAlpha(\cf11 30\cf5 ))),\
+              child: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 add_a_photo
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 , size: \cf11 30\cf5 ),\
+            ),\
+          ),\
+          ...images.asMap().\cf8 entries\cf5 .map((entry) => \cf7 Stack\cf5 (children: [\
+            \cf7 Container\cf5 (width: \cf11 110\cf5 , margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 only\cf5 (right: \cf11 12\cf5 ), decoration: \cf7 BoxDecoration\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 25\cf5 )),\
+                child: \cf7 ClipRRect\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 25\cf5 ), child: \cf7 Image\cf5 .\cf7 memory\cf5 (base64Decode(entry.\cf8 value\cf5 ), fit: BoxFit.\cf8 cover\cf5 ))),\
+            \cf7 Positioned\cf5 (right: \cf11 18\cf5 , top: \cf11 8\cf5 , child: \cf7 GestureDetector\cf5 (onTap: () => setS(() => images.removeAt(entry.\cf8 key\cf5 )),\
+                child: \cf2 const \cf7 CircleAvatar\cf5 (radius: \cf11 14\cf5 , backgroundColor: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 , child: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 close
+\f0\i0 \cf5 , size: \cf11 16\cf5 , color: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 ))))\
+          ])).toList(),\
+        ])),\
+\
+        \cf7 TextField\cf5 (controller: t, decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1064 \u1090 \u1086  \u1072 \u1076 \u1076 \u1072 \u1077 \u1094 \u1077 ?"\cf5 )),\
+        \cf7 TextField\cf5 (controller: d, maxLines: \cf11 3\cf5 , decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1055 \u1072 \u1076 \u1088 \u1072 \u1073 \u1103 \u1079 \u1085 \u1072 \u1077  \u1072 \u1087 \u1110 \u1089 \u1072 \u1085 \u1085 \u1077  (\u1074 \u1072 \u1078 \u1085 \u1072  \u1076 \u1083 \u1103  \u1088 \u1101 \u1082 \u1072 \u1084 \u1077 \u1085 \u1076 \u1072 \u1094 \u1099 \u1081 )"\cf5 )),\
+\
+        \cf7 DropdownButtonFormField\cf5 <String>(\
+            value: reg,\
+            items: belarusRegions.map((e) => \cf7 DropdownMenuItem\cf5 (value: e, child: \cf7 Text\cf5 (e))).toList(),\
+            onChanged: (v) => setS(() => reg = v!),\
+            decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1042 \u1086 \u1073 \u1083 \u1072 \u1089 \u1094 \u1100 "\cf5 )\
+        ),\
+\
+        \cf7 TextField\cf5 (controller: rCtrl, decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1043 \u1086 \u1088 \u1072 \u1076  / \u1056 \u1072 \u1105 \u1085 "\cf5 )),\
+\
+        \cf7 DropdownButtonFormField\cf5 <String>(\
+            value: tag,\
+            items: cats.skip(\cf11 1\cf5 ).map((e) => \cf7 DropdownMenuItem\cf5 (value: e, child: \cf7 Text\cf5 (e))).toList(),\
+            onChanged: (v) => setS(() => tag = v!),\
+            decoration: \cf2 const \cf7 InputDecoration\cf5 (labelText: \cf4 "\uc0\u1050 \u1072 \u1090 \u1101 \u1075 \u1086 \u1088 \u1099 \u1103 "\cf5 )\
+        ),\
+\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 30\cf5 ),\
+        \cf7 ElevatedButton\cf5 (\
+          style: ElevatedButton.
+\f1\i \cf7 styleFrom
+\f0\i0 \cf5 (\
+              minimumSize: \cf2 const \cf7 Size\cf5 (double.
+\f1\i \cf8 infinity
+\f0\i0 \cf5 , \cf11 60\cf5 ),\
+              backgroundColor: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ,\
+              shape: \cf7 RoundedRectangleBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 20\cf5 ))\
+          ),\
+          onPressed: (images.\cf8 isEmpty \cf5 || t.\cf8 text\cf5 .\cf8 isEmpty\cf5 ) ? \cf2 null \cf5 : () \cf2 async \cf5 \{\
+            \cf2 final \cf5 uid = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 !.\cf8 uid\cf5 ;\
+            \cf2 final \cf5 uDoc = \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(uid).get();\
+            \cf2 final \cf5 uData = uDoc.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >?;\
+\
+            \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 ).add(\{\
+              \cf4 'title'\cf5 : t.\cf8 text\cf5 ,\
+              \cf4 'desc'\cf5 : d.\cf8 text\cf5 ,\
+              \cf4 'tag'\cf5 : tag,\
+              \cf4 'city'\cf5 : \cf4 "\cf5 $reg\cf4 , \cf5 $\{rCtrl.\cf8 text\cf5 \}\cf4 "\cf5 ,\
+              \cf4 'img'\cf5 : images[\cf11 0\cf5 ], \cf6 // \uc0\u1044 \u1083 \u1103  \u1087 \u1088 \u1101 \u1074 '\u1102 \
+              \cf4 'images'\cf5 : images, \cf6 // \uc0\u1059 \u1089 \u1077  \u1092 \u1086 \u1090 \u1072 \
+              \cf4 'uid'\cf5 : uid,\
+              \cf4 'authorName'\cf5 : uData?[\cf4 'name'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 ,\
+              \cf4 'username'\cf5 : uData?[\cf4 'username'\cf5 ] ?? \cf4 "user"\cf5 ,\
+              \cf4 'authorRate'\cf5 : uData?[\cf4 'avgRating'\cf5 ] ?? \cf11 5.0\cf5 ,\
+              \cf4 'time'\cf5 : FieldValue.
+\f1\i \cf7 serverTimestamp
+\f0\i0 \cf5 (),\
+              \cf4 'status'\cf5 : \cf4 'pending'\cf5 , \cf6 // \uc0\u1030 \u1076 \u1079 \u1077  \u1085 \u1072  \u1084 \u1072 \u1076 \u1101 \u1088 \u1072 \u1094 \u1099 \u1102 !\
+              \cf4 'isTop'\cf5 : \cf2 false\cf5 ,\
+              \cf4 'likes'\cf5 : [],\
+              \cf4 'likesCount'\cf5 : \cf11 0\cf5 ,\
+              \cf4 'views'\cf5 : \cf11 0\
+            \cf5 \});\
+            \cf2 if \cf5 (context.\cf8 mounted\cf5 ) Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (context);\
+          \},\
+          child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1076 \u1087 \u1088 \u1072 \u1074 \u1110 \u1094 \u1100  \u1085 \u1072  \u1087 \u1088 \u1072 \u1074 \u1077 \u1088 \u1082 \u1091 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 , fontSize: \cf11 18\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+        ),\
+        \cf2 const \cf7 SizedBox\cf5 (height: \cf11 30\cf5 ),\
+      ])),\
+    )),\
+  );\
+\}\
+\cf6 // --- \uc0\u1057 \u1055 \u1030 \u1057  \u1063 \u1040 \u1058 \u1040 \u1038  (\u1042 \u1050 \u1051 \u1040 \u1044 \u1050 \u1040  \u8470 4) ---\
+\cf2 class \cf5 ChatsListTab \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 ChatsListTab(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 final \cf5 myUid = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 ?.\cf8 uid\cf5 ;\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1077  \u1088 \u1072 \u1079 \u1084 \u1086 \u1074 \u1099 "\cf5 )),\
+      body: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+        stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'chats'\cf5 )\
+            .where(\cf4 'users'\cf5 , arrayContains: myUid)\
+            .orderBy(\cf4 'time'\cf5 , descending: \cf2 true\cf5 ).snapshots(),\
+        builder: (c, snap) \{\
+          \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 LinearProgressIndicator\cf5 ();\
+          \cf2 if \cf5 (snap.\cf8 data\cf5 !.\cf8 docs\cf5 .\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1082 \u1091 \u1083 \u1100  \u1085 \u1103 \u1084 \u1072  \u1087 \u1072 \u1074 \u1077 \u1076 \u1072 \u1084 \u1083 \u1077 \u1085 \u1085 \u1103 \u1118 "\cf5 ));\
+\
+          \cf2 return \cf7 ListView\cf5 .\cf7 builder\cf5 (\
+            itemCount: snap.\cf8 data\cf5 !.\cf8 docs\cf5 .\cf8 length\cf5 ,\
+            itemBuilder: (ctx, i) \{\
+              \cf2 final \cf5 d = snap.\cf8 data\cf5 !.\cf8 docs\cf5 [i];\
+              \cf2 final \cf5 List users = d[\cf4 'users'\cf5 ] ?? [];\
+              \cf2 final \cf5 otherId = users.firstWhere(\
+                      (id) => id != myUid,\
+                  orElse: () => \cf4 "unknown" \cf6 // \uc0\u1042 \u1086 \u1090  \u1079 \u1076 \u1077 \u1089 \u1100  \u1084 \u1086 \u1075 \u1083 \u1080  \u1073 \u1099 \u1090 \u1100  \u1080 \u1077 \u1088 \u1086 \u1075 \u1083 \u1080 \u1092 \u1099 , \u1079 \u1072 \u1084 \u1077 \u1085 \u1080  \u1085 \u1072  \u1101 \u1090 \u1086 \
+              \cf5 );\
+\
+              \cf2 return \cf7 FutureBuilder\cf5 <DocumentSnapshot>(\
+                future: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(otherId).get(),\
+                builder: (context, uSnap) \{\
+                  \cf2 final \cf5 uData = uSnap.\cf8 data\cf5 ?.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >?;\
+                  \cf2 return \cf7 ListTile\cf5 (\
+                    leading: \cf7 CircleAvatar\cf5 (\
+                      backgroundImage: uData?[\cf4 'avatar'\cf5 ] != \cf2 null \cf5 ? \cf7 MemoryImage\cf5 (base64Decode(uData![\cf4 'avatar'\cf5 ])) : \cf2 null\cf5 ,\
+                      child: uData?[\cf4 'avatar'\cf5 ] == \cf2 null \cf5 ? \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 person
+\f0\i0 \cf5 ) : \cf2 null\cf5 ,\
+                    ),\
+                    title: \cf7 Text\cf5 (uData?[\cf4 'name'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 ),\
+                    subtitle: \cf7 Text\cf5 (d[\cf4 'last'\cf5 ] ?? \cf4 ""\cf5 , maxLines: \cf11 1\cf5 , overflow: TextOverflow.\cf8 ellipsis\cf5 ),\
+                    onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 ChatPage\cf5 (chatId: d.\cf8 id\cf5 ))),\
+                  );\
+                \},\
+              );\
+            \},\
+          );\
+        \},\
+      ),\
+    );\
+  \}\
+\}\
+\
+\cf6 // --- \uc0\u1040 \u1050 \u1053 \u1054  \u1063 \u1040 \u1058 \u1040  (\u1047  \u1043 \u1040 \u1051 \u1040 \u1057 \u1040 \u1042 \u1067 \u1052 \u1030  \u1030  \u1055 \u1051 \u1040 \u1064 \u1050 \u1040 \u1049 ) ---\
+\cf2 class \cf5 ChatPage \cf2 extends \cf5 StatefulWidget \{\
+  \cf2 final \cf5 String \cf8 chatId\cf5 ;\
+  \cf2 const \cf5 ChatPage(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 chatId\cf5 \});\
+  \cf10 @override \cf5 State<ChatPage> \cf7 createState\cf5 () => \cf7 _ChatPageState\cf5 ();\
+\}\
+\
+\cf2 class \cf5 _ChatPageState \cf2 extends \cf5 State<ChatPage> \{\
+  \cf2 final \cf8 _m \cf5 = \cf7 TextEditingController\cf5 ();\
+  \cf2 final \cf5 String \cf8 my \cf5 = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 !.\cf8 uid\cf5 ;\
+  \cf2 final \cf5 AudioRecorder \cf8 _rec \cf5 = \cf7 AudioRecorder\cf5 ();\
+  \cf2 final \cf5 AudioPlayer \cf8 _player \cf5 = \cf7 AudioPlayer\cf5 (); \cf6 // \uc0\u1055 \u1083 \u1101 \u1077 \u1088  \u1076 \u1083 \u1103  \u1087 \u1088 \u1072 \u1089 \u1083 \u1091 \u1093 \u1086 \u1118 \u1074 \u1072 \u1085 \u1085 \u1103 \
+  \cf5 bool \cf8 _isRec \cf5 = \cf2 false\cf5 ;\
+\
+  \cf10 @override\
+  \cf2 void \cf7 dispose\cf5 () \{\
+    \cf8 _m\cf5 .dispose();\
+    \cf8 _player\cf5 .dispose(); \cf6 // \uc0\u1063 \u1099 \u1089 \u1094 \u1110 \u1084  \u1087 \u1072 \u1084 \u1103 \u1094 \u1100 \
+    \cf2 super\cf5 .dispose();\
+  \}\
+\
+  \cf2 void \cf7 _send\cf5 (\{String? t, String? img, String? audio\}) \cf2 async \cf5 \{\
+    \cf2 if \cf5 (t == \cf2 null \cf5 && img == \cf2 null \cf5 && audio == \cf2 null\cf5 ) \cf2 return\cf5 ;\
+    \cf2 final \cf5 ref = FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'chats'\cf5 ).doc(\cf8 widget\cf5 .\cf8 chatId\cf5 );\
+\
+    \cf2 await \cf5 ref.set(\{\
+      \cf4 'last'\cf5 : t ?? (img != \cf2 null \cf5 ? \cf4 "
+\f2 \uc0\u55357 \u56568 
+\f0  \uc0\u1060 \u1086 \u1090 \u1072 " \cf5 : \cf4 "
+\f2 \uc0\u55356 \u57252 
+\f0  \uc0\u1043 \u1072 \u1083 \u1072 \u1089 \u1072 \u1074 \u1086 \u1077 "\cf5 ),\
+      \cf4 'time'\cf5 : FieldValue.
+\f1\i \cf7 serverTimestamp
+\f0\i0 \cf5 (),\
+    \}, \cf7 SetOptions\cf5 (merge: \cf2 true\cf5 ));\
+\
+    \cf2 await \cf5 ref.collection(\cf4 'msgs'\cf5 ).add(\{\
+      \cf4 'uid'\cf5 : \cf8 my\cf5 , \cf4 't'\cf5 : t, \cf4 'img'\cf5 : img, \cf4 'audio'\cf5 : audio, \cf4 'time'\cf5 : FieldValue.
+\f1\i \cf7 serverTimestamp
+\f0\i0 \cf5 ()\
+    \});\
+    \cf8 _m\cf5 .clear();\
+  \}\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 StreamBuilder\cf5 <DocumentSnapshot>(\
+      stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'chats'\cf5 ).doc(\cf8 widget\cf5 .\cf8 chatId\cf5 ).snapshots(),\
+      builder: (context, cSnap) \{\
+        \cf2 if \cf5 (!cSnap.\cf8 hasData \cf5 || !cSnap.\cf8 data\cf5 !.\cf8 exists\cf5 ) \cf2 return const \cf7 Scaffold\cf5 (body: \cf7 Center\cf5 (child: \cf7 LinearProgressIndicator\cf5 ()));\
+\
+        \cf2 var \cf5 cData = cSnap.\cf8 data\cf5 !.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >;\
+        List users = cData[\cf4 'users'\cf5 ] ?? [];\
+        String otherId = users.firstWhere((id) => id != \cf8 my\cf5 , orElse: () => \cf4 ""\cf5 );\
+        String? adId = cData[\cf4 'adId'\cf5 ]; \cf6 // ID \uc0\u1090 \u1072 \u1074 \u1072 \u1088 \u1072 \
+\
+        \cf2 return \cf7 StreamBuilder\cf5 <DocumentSnapshot>(\
+          stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(otherId).snapshots(),\
+          builder: (context, uSnap) \{\
+            \cf2 var \cf5 u = uSnap.\cf8 data\cf5 ?.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >?;\
+\
+            \cf2 return \cf7 Scaffold\cf5 (\
+              appBar: \cf7 AppBar\cf5 (\
+                title: \cf7 InkWell\cf5 (\
+                  onTap: () \{\
+                    \cf2 if \cf5 (otherId.\cf8 isNotEmpty\cf5 ) \{\
+                      Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 PublicProfile\cf5 (uid: otherId)));\
+                    \}\
+                  \},\
+                  child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+                    \cf7 Text\cf5 (u?[\cf4 'name'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 16\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+                    \cf7 Text\cf5 (\cf4 "@\cf5 $\{u?[\cf4 'username'\cf5 ] ?? \cf4 'user'\cf5 \}\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 12\cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 )),\
+                  ]),\
+                ),\
+              ),\
+              body: \cf7 Column\cf5 (children: [\
+                \cf6 // \uc0\u1055 \u1051 \u1040 \u1064 \u1050 \u1040  \u1058 \u1040 \u1042 \u1040 \u1056 \u1040  (\u1062 \u1071 \u1055 \u1045 \u1056  \u1050 \u1051 \u1030 \u1050 \u1040 \u1041 \u1045 \u1051 \u1068 \u1053 \u1040 \u1071 )\
+                \cf7 GestureDetector\cf5 (\
+                  onTap: () \cf2 async \cf5 \{\
+                    \cf2 if \cf5 (adId != \cf2 null\cf5 ) \{\
+                      \cf2 var \cf5 adDoc = \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 ).doc(adId).get();\
+                      \cf2 if \cf5 (adDoc.\cf8 exists \cf5 && context.\cf8 mounted\cf5 ) \{\
+                        Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 DetailScreen\cf5 (ad: adDoc)));\
+                      \}\
+                    \}\
+                  \},\
+                  child: \cf7 Container\cf5 (\
+                    padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 12\cf5 ),\
+                    color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 .withAlpha(\cf11 20\cf5 ),\
+                    child: \cf7 Row\cf5 (children: [\
+                      \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 shopping_bag_outlined
+\f0\i0 \cf5 , size: \cf11 18\cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ),\
+                      \cf2 const \cf7 SizedBox\cf5 (width: \cf11 10\cf5 ),\
+                      \cf7 Expanded\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1058 \u1101 \u1084 \u1072 : \cf5 $\{cData[\cf4 'last'\cf5 ]?.toString() ?? \cf4 '\uc0\u1040 \u1073 \cf2 \\'\cf4 \uc0\u1103 \u1074 \u1072 '\cf5 \}\cf4 "\cf5 ,\
+                          style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 13\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 w500
+\f0\i0 \cf5 ))),\
+                      \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 arrow_forward_ios
+\f0\i0 \cf5 , size: \cf11 12\cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 ),\
+                    ]),\
+                  ),\
+                ),\
+                \cf7 Expanded\cf5 (child: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+                  stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'chats'\cf5 ).doc(\cf8 widget\cf5 .\cf8 chatId\cf5 ).collection(\cf4 'msgs'\cf5 ).orderBy(\cf4 'time'\cf5 , descending: \cf2 true\cf5 ).snapshots(),\
+                  builder: (c, s) \{\
+                    \cf2 if \cf5 (!s.\cf8 hasData\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 CircularProgressIndicator\cf5 ());\
+                    \cf2 return \cf7 ListView\cf5 .\cf7 builder\cf5 (\
+                      reverse: \cf2 true\cf5 , itemCount: s.\cf8 data\cf5 !.\cf8 docs\cf5 .\cf8 length\cf5 ,\
+                      itemBuilder: (ctx, i) \{\
+                        \cf2 final \cf5 d = s.\cf8 data\cf5 !.\cf8 docs\cf5 [i].data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >;\
+                        bool isMe = d[\cf4 'uid'\cf5 ] == \cf8 my\cf5 ;\
+                        \cf2 return \cf7 Align\cf5 (\
+                          alignment: isMe ? Alignment.
+\f1\i \cf8 centerRight 
+\f0\i0 \cf5 : Alignment.
+\f1\i \cf8 centerLeft
+\f0\i0 \cf5 ,\
+                          child: \cf7 Container\cf5 (\
+                            margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 15\cf5 , vertical: \cf11 5\cf5 ),\
+                            padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 12\cf5 ),\
+                            decoration: \cf7 BoxDecoration\cf5 (\
+                                color: isMe ? Colors.
+\f1\i \cf8 blueAccent 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 .\cf8 shade200\cf5 ,\
+                                borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 18\cf5 )\
+                            ),\
+                            child: \cf7 Column\cf5 (crossAxisAlignment: CrossAxisAlignment.\cf8 start\cf5 , children: [\
+                              \cf2 if \cf5 (d[\cf4 'img'\cf5 ] != \cf2 null\cf5 ) \cf7 Image\cf5 .\cf7 memory\cf5 (base64Decode(d[\cf4 'img'\cf5 ]), width: \cf11 220\cf5 ),\
+\
+                              \cf6 // \uc0\u1043 \u1040 \u1051 \u1040 \u1057 \u1040 \u1042 \u1054 \u1045  (\u1071 \u1050 \u1054 \u1045  \u1052 \u1054 \u1046 \u1053 \u1040  \u1057 \u1051 \u1059 \u1061 \u1040 \u1062 \u1068 )\
+                              \cf2 if \cf5 (d[\cf4 'audio'\cf5 ] != \cf2 null\cf5 ) \cf7 InkWell\cf5 (\
+                                onTap: () \cf2 async \cf5 \{\
+                                  \cf2 final \cf5 bytes = base64Decode(d[\cf4 'audio'\cf5 ]);\
+                                  \cf2 final \cf5 dir = \cf2 await \cf5 getTemporaryDirectory();\
+                                  \cf2 final \cf5 file = \cf7 File\cf5 (\cf4 '\cf5 $\{dir.\cf8 path\cf5 \}\cf4 /temp_audio.m4a'\cf5 );\
+                                  \cf2 await \cf5 file.writeAsBytes(bytes);\
+                                  \cf2 await \cf8 _player\cf5 .play(\cf7 DeviceFileSource\cf5 (file.\cf8 path\cf5 ));\
+                                \},\
+                                child: \cf7 Row\cf5 (mainAxisSize: MainAxisSize.\cf8 min\cf5 , children: [\
+                                  \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 play_circle_fill
+\f0\i0 \cf5 , color: isMe ? Colors.
+\f1\i \cf8 white 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 , size: \cf11 30\cf5 ),\
+                                  \cf2 const \cf7 SizedBox\cf5 (width: \cf11 8\cf5 ),\
+                                  \cf7 Text\cf5 (\cf4 "\uc0\u1057 \u1083 \u1091 \u1093 \u1072 \u1094 \u1100  \u1043 \u1057 "\cf5 , style: \cf7 TextStyle\cf5 (color: isMe ? Colors.
+\f1\i \cf8 white 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 black87
+\f0\i0 \cf5 )),\
+                                ]),\
+                              ),\
+\
+                              \cf2 if \cf5 (d[\cf4 't'\cf5 ] != \cf2 null \cf5 && d[\cf4 't'\cf5 ] != \cf4 ""\cf5 ) \cf7 Text\cf5 (d[\cf4 't'\cf5 ], style: \cf7 TextStyle\cf5 (color: isMe ? Colors.
+\f1\i \cf8 white 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 black87
+\f0\i0 \cf5 )),\
+                            ]),\
+                          ),\
+                        );\
+                      \},\
+                    );\
+                  \},\
+                )),\
+                \cf6 // \uc0\u1055 \u1040 \u1053 \u1069 \u1051 \u1068  \u1059 \u1042 \u1054 \u1044 \u1059 \
+                \cf7 Padding\cf5 (padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 12\cf5 ), child: \cf7 Row\cf5 (children: [\
+                  \cf7 IconButton\cf5 (icon: \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 mic
+\f0\i0 \cf5 , color: \cf8 _isRec \cf5 ? Colors.
+\f1\i \cf8 red 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ),\
+                      onPressed: () \cf2 async \cf5 \{\
+                        \cf2 if \cf5 (\cf2 await \cf8 _rec\cf5 .hasPermission()) \{\
+                          \cf2 if \cf5 (!\cf8 _isRec\cf5 ) \{\
+                            \cf2 final \cf5 dir = \cf2 await \cf5 getTemporaryDirectory();\
+                            \cf2 final \cf5 path = \cf4 '\cf5 $\{dir.\cf8 path\cf5 \}\cf4 /msg.m4a'\cf5 ;\
+                            \cf2 await \cf8 _rec\cf5 .start(\cf2 const \cf7 RecordConfig\cf5 (), path: path);\
+                            setState(() => \cf8 _isRec \cf5 = \cf2 true\cf5 );\
+                          \} \cf2 else \cf5 \{\
+                            \cf2 final \cf5 path = \cf2 await \cf8 _rec\cf5 .stop();\
+                            setState(() => \cf8 _isRec \cf5 = \cf2 false\cf5 );\
+                            \cf2 if \cf5 (path != \cf2 null\cf5 ) \{\
+                              \cf2 final \cf5 b = \cf2 await \cf7 File\cf5 (path).readAsBytes();\
+                              _send(audio: base64Encode(b));\
+                            \}\
+                          \}\
+                        \}\
+                      \}),\
+                  \cf7 Expanded\cf5 (child: \cf7 TextField\cf5 (\
+                      controller: \cf8 _m\cf5 ,\
+                      decoration: \cf7 InputDecoration\cf5 (\
+                          hintText: \cf4 "\uc0\u1053 \u1072 \u1087 \u1110 \u1096 \u1099 \u1094 \u1077 ..."\cf5 , filled: \cf2 true\cf5 , fillColor: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 .\cf8 shade100\cf5 ,\
+                          border: \cf7 OutlineInputBorder\cf5 (borderRadius: \cf7 BorderRadius\cf5 .\cf7 circular\cf5 (\cf11 30\cf5 ), borderSide: BorderSide.
+\f1\i \cf8 none
+\f0\i0 \cf5 )\
+                      )\
+                  )),\
+                  \cf7 IconButton\cf5 (icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 send
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ), onPressed: () => _send(t: \cf8 _m\cf5 .\cf8 text\cf5 )),\
+                ])),\
+              ]),\
+            );\
+          \},\
+        );\
+      \},\
+    );\
+  \}\
+\}\
+\
+\cf6 // --- \uc0\u1052 \u1054 \u1049  \u1055 \u1056 \u1054 \u1060 \u1030 \u1051 \u1068  (\u1042 \u1050 \u1051 \u1040 \u1044 \u1050 \u1040  \u8470 5) ---\
+\cf2 class \cf5 ProfileTab \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 ProfileTab(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 final \cf5 u = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 ;\
+    \cf6 // \uc0\u1040 \u1076 \u1084 \u1110 \u1085  \u1074 \u1099 \u1079 \u1085 \u1072 \u1095 \u1072 \u1077 \u1094 \u1094 \u1072  \u1087 \u1072  UID, \u1103 \u1082 \u1110  \u1090 \u1099  \u1118 \u1089 \u1090 \u1072 \u1074 \u1110 \u1118  \u1091  \u1089 \u1072 \u1084 \u1072 \u1081  \u1087 \u1077 \u1088 \u1096 \u1072 \u1081  \u1095 \u1072 \u1089 \u1090 \u1094 \u1099 \
+    \cf5 bool isAdmin = u?.\cf8 uid \cf5 == adminUid;\
+\
+    \cf2 return \cf7 StreamBuilder\cf5 <DocumentSnapshot>(\
+      stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(u?.\cf8 uid\cf5 ).snapshots(),\
+      builder: (context, snap) \{\
+        \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 CircularProgressIndicator\cf5 ());\
+        \cf2 final \cf5 d = snap.\cf8 data\cf5 ?.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >?;\
+        int pts = d?[\cf4 'points'\cf5 ] ?? \cf11 0\cf5 ;\
+        String name = d?[\cf4 'name'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 ;\
+        String username = d?[\cf4 'username'\cf5 ] ?? \cf4 "user"\cf5 ;\
+        String? ava = d?[\cf4 'avatar'\cf5 ];\
+\
+        \cf2 return \cf7 Scaffold\cf5 (\
+          appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1086 \u1081  \u1087 \u1088 \u1086 \u1092 \u1110 \u1083 \u1100 "\cf5 ), actions: [\
+            \cf7 IconButton\cf5 (icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 brightness_6
+\f0\i0 \cf5 ), onPressed: () =>\
+            themeNotifier.\cf8 value \cf5 = themeNotifier.\cf8 value \cf5 == ThemeMode.\cf8 light \cf5 ? ThemeMode.\cf8 dark \cf5 : ThemeMode.\cf8 light\cf5 ),\
+          ]),\
+          body: \cf7 ListView\cf5 (padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 25\cf5 ), children: [\
+            \cf6 // 1. \uc0\u1040 \u1042 \u1040 \u1058 \u1040 \u1056 \u1050 \u1040  (ImagePicker)\
+            \cf7 Center\cf5 (child: \cf7 GestureDetector\cf5 (\
+                onTap: () => _updateAvatar(u!.\cf8 uid\cf5 ),\
+                child: \cf7 CircleAvatar\cf5 (radius: \cf11 65\cf5 , backgroundColor: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 .withAlpha(\cf11 20\cf5 ),\
+                    backgroundImage: ava != \cf2 null \cf5 ? \cf7 MemoryImage\cf5 (base64Decode(ava)) : \cf2 null\cf5 ,\
+                    child: ava == \cf2 null \cf5 ? \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 camera_alt
+\f0\i0 \cf5 , size: \cf11 40\cf5 , color: Colors.
+\f1\i \cf8 blueAccent
+\f0\i0 \cf5 ) : \cf2 null\cf5 ))),\
+\
+            \cf2 const \cf7 SizedBox\cf5 (height: \cf11 15\cf5 ),\
+\
+            \cf6 // 2. \uc0\u1030 \u1052 \u1071  \u1030  \u1070 \u1047 \u1045 \u1056 \u1053 \u1069 \u1049 \u1052  (\u1050 \u1083 \u1110 \u1082 \u1072 \u1073 \u1077 \u1083 \u1100 \u1085 \u1099 \u1103 )\
+            \cf7 Center\cf5 (child: \cf7 Column\cf5 (children: [\
+              \cf7 TextButton\cf5 (onPressed: () => _editName(context, u!.\cf8 uid\cf5 , name),\
+                  child: \cf7 Text\cf5 (\cf4 "\cf5 $name\cf4  (\cf5 $\{(d?[\cf4 'avgRating'\cf5 ] ?? \cf11 5.0\cf5 ).toStringAsFixed(\cf11 1\cf5 )\} 
+\f2 \cf4 \uc0\u9733 
+\f0 )"\cf5 ,\
+                      style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 22\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 ))),\
+              \cf7 TextButton\cf5 (onPressed: () => _editUsername(context, u!.\cf8 uid\cf5 , username),\
+                  child: \cf7 Text\cf5 (\cf4 "@\cf5 $username\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 , fontSize: \cf11 16\cf5 ))),\
+            ])),\
+\
+            \cf6 // 3. \uc0\u1041 \u1040 \u1051 \u1067 \
+            \cf7 Center\cf5 (child: \cf7 Chip\cf5 (backgroundColor: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 .withAlpha(\cf11 20\cf5 ),\
+                label: \cf7 Text\cf5 (\cf4 "\uc0\u1041 \u1072 \u1083 \u1099 : \cf5 $pts\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )))),\
+\
+            \cf2 const \cf7 Divider\cf5 (height: \cf11 40\cf5 ),\
+\
+            \cf6 // 4. \uc0\u1052 \u1069 \u1053 \u1070 \
+            \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 list_alt
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 blue
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1077  \u1072 \u1073 '\u1103 \u1074 \u1099 "\cf5 ),\
+                onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 MyAdsManager\cf5 (uid: u!.\cf8 uid\cf5 , points: pts)))),\
+\
+            \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 star_outline
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1077  \u1074 \u1086 \u1076 \u1075 \u1091 \u1082 \u1110 "\cf5 ),\
+                onTap: () => _showReviews(context, u!.\cf8 uid\cf5 )),\
+\
+            \cf6 // \uc0\u1059 \u1042 \u1040 \u1061 \u1054 \u1044  \u1059  \u1040 \u1044 \u1052 \u1030 \u1053 \u1050 \u1059  (\u1058 \u1086 \u1083 \u1100 \u1082 \u1110  \u1082 \u1072 \u1083 \u1110  \u1090 \u1074 \u1086 \u1081  UID \u1089 \u1091 \u1087 \u1072 \u1076 \u1072 \u1077 )\
+            \cf2 if \cf5 (isAdmin) \cf7 ListTile\cf5 (\
+              leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 admin_panel_settings
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 ),\
+              title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1085 \u1101 \u1083 \u1100  \u1084 \u1072 \u1076 \u1101 \u1088 \u1072 \u1094 \u1099 \u1110 "\cf5 , style: \cf7 TextStyle\cf5 (fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 )),\
+              onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf2 const \cf7 AdminPanel\cf5 ())),\
+            ),\
+\
+            \cf2 const \cf7 Divider\cf5 (),\
+\
+            \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 logout
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1099 \u1081 \u1089 \u1094 \u1110 "\cf5 ),\
+                onTap: () => FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .signOut()),\
+\
+            \cf6 // 5. \uc0\u1042 \u1067 \u1044 \u1040 \u1051 \u1045 \u1053 \u1053 \u1045  \u1055 \u1040  \u1047 \u1040 \u1050 \u1054 \u1053 \u1045  \u8470 99-\u1047 \
+            \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 delete_forever_outlined
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 redAccent
+\f0\i0 \cf5 ),\
+                title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1099 \u1076 \u1072 \u1083 \u1110 \u1094 \u1100  \u1087 \u1088 \u1086 \u1092 \u1110 \u1083 \u1100 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 redAccent
+\f0\i0 \cf5 )),\
+                onTap: () => _confirmAccountDeletion(context, u!.\cf8 uid\cf5 )),\
+          ]),\
+        );\
+      \},\
+    );\
+  \}\
+\
+  \cf6 // --- \uc0\u1052 \u1045 \u1058 \u1040 \u1044 \u1067  \u1055 \u1056 \u1054 \u1060 \u1030 \u1051 \u1070  (\u1047 \u1084 \u1103 \u1096 \u1095 \u1072 \u1081  \u1110 \u1093  \u1091 \u1085 \u1091 \u1090 \u1088  \u1082 \u1083 \u1072 \u1089 \u1072  ProfileTab) ---\
+  \cf2 void \cf7 _updateAvatar\cf5 (String uid) \cf2 async \cf5 \{\
+    \cf2 final \cf5 res = \cf2 await \cf7 ImagePicker\cf5 ().pickImage(source: ImageSource.\cf8 gallery\cf5 , maxWidth: \cf11 400\cf5 , imageQuality: \cf11 25\cf5 );\
+    \cf2 if \cf5 (res != \cf2 null\cf5 ) \{\
+      \cf2 final \cf5 bytes = \cf2 await \cf7 File\cf5 (res.\cf8 path\cf5 ).readAsBytes();\
+      \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(uid).update(\{\cf4 'avatar'\cf5 : base64Encode(bytes)\});\
+    \}\
+  \}\
+\
+\
+  \cf2 void \cf7 _editName\cf5 (BuildContext context, String uid, String old) \{\
+    \cf2 final \cf5 c = \cf7 TextEditingController\cf5 (text: old);\
+    showDialog(context: context, builder: (ctx) => \cf7 AlertDialog\cf5 (\
+      title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1030 \u1084 \u1103  (\u1076 \u1072  10 \u1089 \u1110 \u1084 \u1074 \u1072 \u1083 \u1072 \u1118 )"\cf5 ),\
+      content: \cf7 TextField\cf5 (controller: c, maxLength: \cf11 10\cf5 ), \cf6 // \uc0\u1054 \u1075 \u1088 \u1072 \u1085 \u1080 \u1095 \u1077 \u1085 \u1080 \u1077  10\
+      \cf5 actions: [\cf7 TextButton\cf5 (child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1047 \u1072 \u1093 \u1072 \u1074 \u1072 \u1094 \u1100 "\cf5 ),\
+          onPressed: () \{\
+            \cf2 if \cf5 (c.\cf8 text\cf5 .trim().\cf8 isNotEmpty\cf5 ) \{\
+              FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(uid).update(\{\cf4 'name'\cf5 : c.\cf8 text\cf5 .trim()\});\
+            \}\
+            Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (ctx);\
+          \})],\
+    ));\
+  \}\
+\
+  \cf2 void \cf7 _editUsername\cf5 (BuildContext context, String uid, String old) \{\
+    \cf2 final \cf5 c = \cf7 TextEditingController\cf5 (text: old);\
+    showDialog(context: context, builder: (ctx) => \cf7 AlertDialog\cf5 (\
+      title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1070 \u1079 \u1077 \u1088 \u1085 \u1101 \u1081 \u1084  (eng, \u1076 \u1072  10 \u1089 \u1110 \u1084 \u1074 .)"\cf5 ),\
+      content: \cf7 TextField\cf5 (\
+        controller: c,\
+        maxLength: \cf11 10\cf5 ,\
+        decoration: \cf2 const \cf7 InputDecoration\cf5 (prefixText: \cf4 "@"\cf5 , hintText: \cf4 "\uc0\u1090 \u1086 \u1083 \u1100 \u1082 \u1110  \u1072 \u1085 \u1075 \u1083 \u1110 \u1081 \u1089 \u1082 \u1110 \u1103  \u1083 \u1110 \u1090 \u1072 \u1088 \u1099 "\cf5 ),\
+      ),\
+      actions: [\
+        \cf7 TextButton\cf5 (onPressed: () => Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (ctx), child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1076 \u1084 \u1077 \u1085 \u1072 "\cf5 )),\
+        \cf7 TextButton\cf5 (\
+            child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1047 \u1072 \u1093 \u1072 \u1074 \u1072 \u1094 \u1100 "\cf5 ),\
+            onPressed: () \cf2 async \cf5 \{\
+              \cf6 // 1. \uc0\u1060 \u1086 \u1088 \u1084 \u1072 \u1090 \u1080 \u1088 \u1091 \u1077 \u1084 : \u1074  \u1085 \u1080 \u1078 \u1085 \u1080 \u1081  \u1088 \u1077 \u1075 \u1080 \u1089 \u1090 \u1088 , \u1091 \u1073 \u1080 \u1088 \u1072 \u1077 \u1084  \u1087 \u1088 \u1086 \u1073 \u1077 \u1083 \u1099  \u1080  @\
+              \cf5 String input = c.\cf8 text\cf5 .trim().toLowerCase().replaceAll(\cf4 '@'\cf5 , \cf4 ''\cf5 );\
+              RegExp regExp = \cf7 RegExp\cf5 (\cf4 r'^[a-z0-9]+$'\cf5 ); \cf6 // \uc0\u1058 \u1086 \u1083 \u1100 \u1082 \u1086  \u1083 \u1072 \u1090 \u1080 \u1085 \u1080 \u1094 \u1072  \u1080  \u1094 \u1080 \u1092 \u1088 \u1099 \
+\
+              \cf2 if \cf5 (input.\cf8 length \cf5 < \cf11 3 \cf5 || input.\cf8 length \cf5 > \cf11 10 \cf5 || !regExp.hasMatch(input)) \{\
+                ScaffoldMessenger.
+\f1\i \cf7 of
+\f0\i0 \cf5 (context).showSnackBar(\
+                    \cf2 const \cf7 SnackBar\cf5 (content: \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1076  3 \u1076 \u1072  10 \u1089 \u1110 \u1084 \u1074 \u1072 \u1083 \u1072 \u1118 , \u1090 \u1086 \u1083 \u1100 \u1082 \u1110  \u1083 \u1072 \u1094 \u1110 \u1085 \u1110 \u1094 \u1072 !"\cf5 ))\
+                );\
+                \cf2 return\cf5 ;\
+              \}\
+\
+              \cf6 // 2. \uc0\u1055 \u1056 \u1054 \u1042 \u1045 \u1056 \u1050 \u1040  \u1053 \u1040  \u1059 \u1053 \u1048 \u1050 \u1040 \u1051 \u1068 \u1053 \u1054 \u1057 \u1058 \u1068 \
+              \cf2 final \cf5 check = \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 )\
+                  .where(\cf4 'username'\cf5 , isEqualTo: input)\
+                  .get();\
+\
+              \cf2 if \cf5 (check.\cf8 docs\cf5 .\cf8 isNotEmpty \cf5 && check.\cf8 docs\cf5 .\cf8 first\cf5 .\cf8 id \cf5 != uid) \{\
+                ScaffoldMessenger.
+\f1\i \cf7 of
+\f0\i0 \cf5 (context).showSnackBar(\
+                    \cf2 const \cf7 SnackBar\cf5 (content: \cf7 Text\cf5 (\cf4 "\uc0\u1058 \u1072 \u1082 \u1110  \u1102 \u1079 \u1077 \u1088 \u1085 \u1101 \u1081 \u1084  \u1091 \u1078 \u1086  \u1079 \u1072 \u1085 \u1103 \u1090 \u1099 !"\cf5 ))\
+                );\
+              \} \cf2 else \cf5 \{\
+                \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(uid).update(\{\cf4 'username'\cf5 : input\});\
+                \cf2 if \cf5 (context.\cf8 mounted\cf5 ) Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (ctx);\
+              \}\
+            \}\
+        )\
+      ],\
+    ));\
+  \}\
+\
+  \cf2 void \cf7 _confirmAccountDeletion\cf5 (BuildContext context, String uid) \{\
+    showDialog(context: context, builder: (ctx) => \cf7 AlertDialog\cf5 (\
+      title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1099 \u1076 \u1072 \u1083 \u1110 \u1094 \u1100  \u1072 \u1082 \u1082 \u1072 \u1118 \u1085 \u1090 ?"\cf5 ),\
+      content: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1047 \u1075 \u1086 \u1076 \u1085 \u1072  \u1079  \u1047 \u1072 \u1082 \u1086 \u1085 \u1072 \u1084  \u1056 \u1041  \u8470 99-\u1047 , \u1091 \u1089 \u1077  \u1074 \u1072 \u1096 \u1099  \u1076 \u1072 \u1076 \u1079 \u1077 \u1085 \u1099 \u1103  \u1073 \u1091 \u1076 \u1091 \u1094 \u1100  \u1074 \u1099 \u1076 \u1072 \u1083 \u1077 \u1085 \u1099  \u1085 \u1077 \u1079 \u1074 \u1072 \u1088 \u1086 \u1090 \u1085 \u1072 . \u1042 \u1099  \u1118 \u1087 \u1101 \u1118 \u1085 \u1077 \u1085 \u1099 ?"\cf5 ),\
+      actions: [\
+        \cf7 TextButton\cf5 (onPressed: () => Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (ctx), child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1076 \u1084 \u1077 \u1085 \u1072 "\cf5 )),\
+        \cf7 TextButton\cf5 (onPressed: () \cf2 async \cf5 \{\
+          \cf2 var \cf5 ads = \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 ).where(\cf4 'uid'\cf5 , isEqualTo: uid).get();\
+          \cf2 for \cf5 (\cf2 var \cf5 doc \cf2 in \cf5 ads.\cf8 docs\cf5 ) \{ \cf2 await \cf5 doc.\cf8 reference\cf5 .delete(); \}\
+          \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(uid).delete();\
+          \cf2 await \cf5 FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 ?.delete();\
+          \cf2 if \cf5 (context.\cf8 mounted\cf5 ) Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (ctx);\
+        \}, child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1058 \u1040 \u1050 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 ))),\
+      ],\
+    ));\
+  \}\
+\}\
+\
+\
+\cf6 // --- 2. \uc0\u1052 \u1069 \u1053 \u1069 \u1044 \u1046 \u1040 \u1056  \u1057 \u1042 \u1040 \u1030 \u1061  \u1040 \u1041 '\u1071 \u1042 \u1040 \u1038  (\u1058 \u1054 \u1055  \u1047 \u1040  30 \u1041 \u1040 \u1051 \u1040 \u1038 ) ---\
+\cf2 class \cf5 MyAdsManager \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 final \cf5 String \cf8 uid\cf5 ; \cf2 final \cf5 int \cf8 points\cf5 ;\
+  \cf2 const \cf5 MyAdsManager(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 uid\cf5 , \cf2 required this\cf5 .\cf8 points\cf5 \});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1077  \u1072 \u1073 '\u1103 \u1074 \u1099 "\cf5 )),\
+      body: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+        stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 ).where(\cf4 'uid'\cf5 , isEqualTo: \cf8 uid\cf5 ).snapshots(),\
+        builder: (c, snap) \{\
+          \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 CircularProgressIndicator\cf5 ());\
+          \cf2 if \cf5 (snap.\cf8 data\cf5 !.\cf8 docs\cf5 .\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1082 \u1091 \u1083 \u1100  \u1087 \u1091 \u1089 \u1090 \u1072 "\cf5 ));\
+\
+          \cf2 return \cf7 ListView\cf5 (\
+            children: snap.\cf8 data\cf5 !.\cf8 docs\cf5 .map((d) \{\
+              \cf2 final \cf5 data = d.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >;\
+              bool isTop = data[\cf4 'isTop'\cf5 ] ?? \cf2 false\cf5 ;\
+              String status = data[\cf4 'status'\cf5 ] ?? \cf4 "pending"\cf5 ;\
+\
+              \cf2 return \cf7 Card\cf5 (\
+                margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 10\cf5 ),\
+                child: \cf7 Column\cf5 (children: [\
+                  \cf7 AdCard\cf5 (d: d), \cf6 // \uc0\u1057 \u1072 \u1084 \u1072  \u1082 \u1072 \u1088 \u1090 \u1086 \u1095 \u1082 \u1072 \
+                  \cf7 Padding\cf5 (\
+                    padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 10\cf5 ),\
+                    child: \cf7 Row\cf5 (mainAxisAlignment: MainAxisAlignment.\cf8 spaceBetween\cf5 , children: [\
+                      \cf6 // \uc0\u1048 \u1085 \u1076 \u1080 \u1082 \u1072 \u1090 \u1086 \u1088  \u1089 \u1090 \u1072 \u1090 \u1091 \u1089 \u1072 \
+                      \cf7 Text\cf5 (status == \cf4 'active' \cf5 ? \cf4 "
+\f2 \uc0\u9989 
+\f0  \uc0\u1040 \u1076 \u1086 \u1073 \u1088 \u1072 \u1085 \u1072 " \cf5 : \cf4 "
+\f2 \uc0\u9203 
+\f0  \uc0\u1053 \u1072  \u1087 \u1088 \u1072 \u1074 \u1077 \u1088 \u1094 \u1099 "\cf5 ,\
+                          style: \cf7 TextStyle\cf5 (color: status == \cf4 'active' \cf5 ? Colors.
+\f1\i \cf8 green 
+\f0\i0 \cf5 : Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+\
+                      \cf6 // \uc0\u1050 \u1085 \u1086 \u1087 \u1082 \u1072  \u1058 \u1054 \u1055  (\u1072 \u1082 \u1090 \u1080 \u1074 \u1085 \u1072  \u1090 \u1086 \u1083 \u1100 \u1082 \u1086  \u1076 \u1083 \u1103  \u1086 \u1076 \u1086 \u1073 \u1088 \u1077 \u1085 \u1085 \u1099 \u1093 )\
+                      \cf2 if \cf5 (status == \cf4 'active' \cf5 && !isTop) \cf7 ElevatedButton\cf5 (\
+                        onPressed: \cf8 points \cf5 < \cf11 30 \cf5 ? \cf2 null \cf5 : () \cf2 async \cf5 \{\
+                          \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(\cf8 uid\cf5 ).update(\{\cf4 'points'\cf5 : FieldValue.
+\f1\i \cf7 increment
+\f0\i0 \cf5 (-\cf11 30\cf5 )\});\
+                          \cf2 await \cf5 d.\cf8 reference\cf5 .update(\{\cf4 'isTop'\cf5 : \cf2 true\cf5 \});\
+                        \},\
+                        child: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1059  \u1058 \u1054 \u1055  (30 \u1073 .)"\cf5 ),\
+                      ) \cf2 else if \cf5 (isTop) \cf2 const \cf7 Text\cf5 (\cf4 "
+\f2 \uc0\u10024 
+\f0  \uc0\u1059  \u1058 \u1054 \u1055 \u1045 "\cf5 , style: \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 )),\
+                    ]),\
+                  ),\
+                ]),\
+              );\
+            \}).toList(),\
+          );\
+        \},\
+      ),\
+    );\
+  \}\
+\}\
+\
+\
+\cf6 // --- 3. \uc0\u1055 \u1040 \u1053 \u1069 \u1051 \u1068  \u1040 \u1044 \u1052 \u1030 \u1053 \u1030 \u1057 \u1058 \u1056 \u1040 \u1058 \u1040 \u1056 \u1040  ---\
+\cf2 class \cf5 AdminPanel \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 AdminPanel(\{\cf2 super\cf5 .key\});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1076 \u1101 \u1088 \u1072 \u1094 \u1099 \u1103 "\cf5 )),\
+      body: \cf7 ListView\cf5 (children: [\
+        \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 check_circle
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 green
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1088 \u1072 \u1074 \u1077 \u1088 \u1082 \u1072  \u1072 \u1073 '\u1103 \u1118 "\cf5 ),\
+            onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf2 const \cf7 AdModScreen\cf5 ()))),\
+        \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 star
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1086 \u1076 \u1075 \u1091 \u1082 \u1110  (+1/-10)"\cf5 ),\
+            onTap: () => Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf2 const \cf7 ReviewModScreen\cf5 ()))),\
+      ]),\
+    );\
+  \}\
+\}\
+\
+\cf6 // --- 4. \uc0\u1069 \u1050 \u1056 \u1040 \u1053  \u1052 \u1040 \u1044 \u1069 \u1056 \u1040 \u1062 \u1067 \u1030  \u1040 \u1041 '\u1071 \u1038  ---\
+\cf2 class \cf5 AdModScreen \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 AdModScreen(\{\cf2 super\cf5 .key\});\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1086 \u1074 \u1099 \u1103  \u1072 \u1073 '\u1103 \u1074 \u1099 "\cf5 )),\
+      body: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+        stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+            .where(\cf4 'status'\cf5 , isEqualTo: \cf4 'pending'\cf5 )\
+            .snapshots(),\
+        builder: (c, snap) \{\
+          \cf2 if \cf5 (snap.\cf8 hasError\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1072 \u1084 \u1099 \u1083 \u1082 \u1072  \u1073 \u1072 \u1079 \u1099 "\cf5 ));\
+          \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 LinearProgressIndicator\cf5 ();\
+\
+          \cf2 final \cf5 docs = snap.\cf8 data\cf5 !.\cf8 docs\cf5 ;\
+          \cf2 if \cf5 (docs.\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1103 \u1084 \u1072  \u1085 \u1086 \u1074 \u1099 \u1093  \u1072 \u1073 '\u1103 \u1118 "\cf5 ));\
+\
+          \cf2 return \cf7 ListView\cf5 .\cf7 builder\cf5 (\
+            itemCount: docs.\cf8 length\cf5 ,\
+            itemBuilder: (ctx, i) \{\
+              \cf2 final \cf5 d = docs[i];\
+              \cf2 return \cf7 Column\cf5 (\
+                children: [\
+                  \cf7 AdCard\cf5 (d: d), \cf6 // \uc0\u1058 \u1077 \u1087 \u1077 \u1088 \u1100  \u1072 \u1076 \u1084 \u1080 \u1085  \u1089 \u1088 \u1072 \u1079 \u1091  \u1074 \u1080 \u1076 \u1080 \u1090 , \u1063 \u1058 \u1054  \u1084 \u1086 \u1076 \u1077 \u1088 \u1080 \u1088 \u1091 \u1077 \u1090 \
+                  \cf7 Padding\cf5 (\
+                    padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 symmetric\cf5 (horizontal: \cf11 20\cf5 , vertical: \cf11 10\cf5 ),\
+                    child: \cf7 Row\cf5 (\
+                      children: [\
+                        \cf7 Expanded\cf5 (\
+                          child: \cf7 ElevatedButton\cf5 .\cf7 icon\cf5 (\
+                            icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 check
+\f0\i0 \cf5 ),\
+                            style: ElevatedButton.
+\f1\i \cf7 styleFrom
+\f0\i0 \cf5 (backgroundColor: Colors.
+\f1\i \cf8 green
+\f0\i0 \cf5 , foregroundColor: Colors.
+\f1\i \cf8 white
+\f0\i0 \cf5 ),\
+                            onPressed: () => d.\cf8 reference\cf5 .update(\{\cf4 'status'\cf5 : \cf4 'active'\cf5 \}),\
+                            label: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1040 \u1044 \u1054 \u1041 \u1056 \u1067 \u1062 \u1068 "\cf5 ),\
+                          ),\
+                        ),\
+                        \cf2 const \cf7 SizedBox\cf5 (width: \cf11 10\cf5 ),\
+                        \cf7 IconButton\cf5 (\
+                          icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 delete_forever
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 ),\
+                          onPressed: () => d.\cf8 reference\cf5 .delete(),\
+                        ),\
+                      ],\
+                    ),\
+                  ),\
+                  \cf2 const \cf7 Divider\cf5 (),\
+                ],\
+              );\
+            \},\
+          );\
+        \},\
+      ),\
+    );\
+  \}\
+\}\
+\
+\
+\cf6 // --- 5. \uc0\u1044 \u1040 \u1055 \u1040 \u1052 \u1054 \u1046 \u1053 \u1067 \u1071  \u1052 \u1045 \u1058 \u1040 \u1044 \u1067  (\u1063 \u1040 \u1058 \u1067 , \u1042 \u1054 \u1044 \u1043 \u1059 \u1050 \u1030 , \u1042 \u1067 \u1044 \u1040 \u1051 \u1045 \u1053 \u1053 \u1045 ) ---\
+\cf2 void \cf9 _showReviews\cf5 (BuildContext context, String uid) \{\
+  Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 Scaffold\cf5 (appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1086 \u1076 \u1075 \u1091 \u1082 \u1110 "\cf5 )),\
+      body: \cf7 StreamBuilder\cf5 <QuerySnapshot>(stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'reviews'\cf5 ).where(\cf4 'to'\cf5 , isEqualTo: uid).where(\cf4 'status'\cf5 , isEqualTo: \cf4 'active'\cf5 ).snapshots(),\
+          builder: (c, s) => !s.\cf8 hasData \cf5 ? \cf2 const \cf7 LinearProgressIndicator\cf5 () : \cf7 ListView\cf5 (children: s.\cf8 data\cf5 !.\cf8 docs\cf5 .map((d) => \cf7 ListTile\cf5 (leading: \cf7 Text\cf5 (\cf4 "\cf5 $\{d[\cf4 'stars'\cf5 ]\}
+\f2 \cf4 \uc0\u11088 
+\f0 "\cf5 ), title: \cf7 Text\cf5 (d[\cf4 'text'\cf5 ] ?? \cf4 ""\cf5 ))).toList())))));\
+\}\
+\
+\cf2 class \cf5 ReviewModScreen \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 ReviewModScreen(\{\cf2 super\cf5 .key\});\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1052 \u1072 \u1076 \u1101 \u1088 \u1072 \u1094 \u1099 \u1103  \u1074 \u1086 \u1076 \u1075 \u1091 \u1082 \u1072 \u1118 "\cf5 )),\
+      body: \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+        stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'reviews'\cf5 )\
+            .where(\cf4 'status'\cf5 , isEqualTo: \cf4 'pending'\cf5 )\
+            .snapshots(),\
+        builder: (c, snap) \{\
+          \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 LinearProgressIndicator\cf5 ();\
+          \cf2 final \cf5 docs = snap.\cf8 data\cf5 !.\cf8 docs\cf5 ;\
+          \cf2 if \cf5 (docs.\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1086 \u1076 \u1075 \u1091 \u1082 \u1072 \u1118  \u1085 \u1103 \u1084 \u1072 "\cf5 ));\
+\
+          \cf2 return \cf7 ListView\cf5 .\cf7 builder\cf5 (\
+            itemCount: docs.\cf8 length\cf5 ,\
+            itemBuilder: (ctx, i) \{\
+              \cf2 final \cf5 d = docs[i];\
+              \cf2 final \cf5 data = d.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >? ?? \{\};\
+              \cf2 return \cf7 Card\cf5 (\
+                margin: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 10\cf5 ),\
+                child: \cf7 ListTile\cf5 (\
+                  leading: \cf7 CircleAvatar\cf5 (child: \cf7 Text\cf5 (\cf4 "\cf5 $\{data[\cf4 'stars'\cf5 ] ?? \cf11 5\cf5 \}\cf4 "\cf5 )),\
+                  title: \cf7 Text\cf5 (data[\cf4 'text'\cf5 ] ?? \cf4 "\uc0\u1041 \u1077 \u1079  \u1090 \u1101 \u1082 \u1089 \u1090 \u1091 "\cf5 ),\
+                  subtitle: \cf7 Text\cf5 (\cf4 "\uc0\u1050 \u1072 \u1084 \u1091 : \cf5 $\{data[\cf4 'to'\cf5 ] ?? \cf4 'ID \uc0\u1085 \u1077  \u1079 \u1085 \u1086 \u1081 \u1076 \u1079 \u1077 \u1085 \u1099 '\cf5 \}\cf4 "\cf5 ),\
+                  trailing: \cf7 Row\cf5 (\
+                    mainAxisSize: MainAxisSize.\cf8 min\cf5 ,\
+                    children: [\
+                      \cf7 IconButton\cf5 (\
+                        icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 done
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 green
+\f0\i0 \cf5 ),\
+                        onPressed: () \cf2 async \cf5 \{\
+                          double stars = (data[\cf4 'stars'\cf5 ] ?? \cf11 5\cf5 ).toDouble();\
+                          int p = (stars >= \cf11 4\cf5 ) ? \cf11 1 \cf5 : (stars <= \cf11 2 \cf5 ? -\cf11 10 \cf5 : \cf11 0\cf5 );\
+                          \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(data[\cf4 'to'\cf5 ]).update(\{\
+                            \cf4 'points'\cf5 : FieldValue.
+\f1\i \cf7 increment
+\f0\i0 \cf5 (p)\
+                          \});\
+                          \cf2 await \cf5 d.\cf8 reference\cf5 .update(\{\cf4 'status'\cf5 : \cf4 'active'\cf5 \});\
+                        \},\
+                      ),\
+                      \cf7 IconButton\cf5 (\
+                        icon: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 close
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 ),\
+                        onPressed: () => d.\cf8 reference\cf5 .delete(),\
+                      ),\
+                    ],\
+                  ),\
+                ),\
+              );\
+            \},\
+          );\
+        \},\
+      ),\
+    );\
+  \}\
+\}\
+\
+\
+\cf2 void \cf9 _showDeleteDialog\cf5 (BuildContext context, DocumentSnapshot ad) \{\
+  showModalBottomSheet(context: context, builder: (c) => \cf7 ListTile\cf5 (leading: \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 delete
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 red
+\f0\i0 \cf5 ), title: \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1042 \u1099 \u1076 \u1072 \u1083 \u1110 \u1094 \u1100 "\cf5 ),\
+      onTap: () \{ ad.\cf8 reference\cf5 .delete(); Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (c); Navigator.
+\f1\i \cf7 pop
+\f0\i0 \cf5 (context); \}));\
+\}\
+\cf6 // --- 1. \uc0\u1048 \u1057 \u1055 \u1056 \u1040 \u1042 \u1051 \u1045 \u1053 \u1053 \u1067 \u1049  \u1050 \u1051 \u1040 \u1057 \u1057  \u1048 \u1047 \u1041 \u1056 \u1040 \u1053 \u1053 \u1054 \u1043 \u1054  ---\
+\cf2 class \cf5 FavoritesTab \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 const \cf5 FavoritesTab(\{\cf2 super\cf5 .key\});\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 final \cf5 myUid = FirebaseAuth.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .\cf8 currentUser\cf5 ?.\cf8 uid\cf5 ;\
+    \cf2 return \cf7 AdsManager\cf5 (\
+      title: \cf4 "\uc0\u1040 \u1073 \u1088 \u1072 \u1085 \u1072 \u1077 "\cf5 ,\
+      query: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+          .where(\cf4 'likes'\cf5 , arrayContains: myUid),\
+    );\
+  \}\
+\}\
+\
+\cf6 // --- 2. \uc0\u1048 \u1057 \u1055 \u1056 \u1040 \u1042 \u1051 \u1045 \u1053 \u1053 \u1040 \u1071  \u1060 \u1059 \u1053 \u1050 \u1062 \u1048 \u1071  \u1057 \u1058 \u1040 \u1056 \u1058 \u1040  \u1063 \u1040 \u1058 \u1040  ---\
+// \uc0\u1055 \u1056 \u1040 \u1042 \u1030 \u1051 \u1068 \u1053 \u1040 \u1071  \u1060 \u1059 \u1053 \u1050 \u1062 \u1067 \u1071  \u1057 \u1058 \u1040 \u1056 \u1058 \u1040  \u1063 \u1040 \u1058 \u1040  (5 \u1040 \u1056 \u1043 \u1059 \u1052 \u1045 \u1053 \u1058 \u1040 \u1038 )\
+\cf2 void \cf9 _startChat\cf5 (BuildContext context, String myId, String otherId, String title, String adId) \cf2 async \cf5 \{\
+  \cf2 if \cf5 (myId == otherId) \cf2 return\cf5 ;\
+\
+  \cf6 // \uc0\u1057 \u1072 \u1088 \u1090 \u1099 \u1088 \u1091 \u1077 \u1084  ID, \u1082 \u1072 \u1073  \u1095 \u1072 \u1090  \u1087 \u1072 \u1084 \u1110 \u1078  \u1076 \u1074 \u1091 \u1084 \u1072  \u1083 \u1102 \u1076 \u1079 \u1100 \u1084 \u1110  \u1079 \u1072 \u1118 \u1089 \u1105 \u1076 \u1099  \u1084 \u1077 \u1118  \u1072 \u1076 \u1079 \u1110 \u1085  \u1110  \u1090 \u1086 \u1081  \u1078 \u1072  \u1072 \u1076 \u1088 \u1072 \u1089 \
+  \cf5 List<String> ids = [myId, otherId];\
+  ids.sort();\
+  String cid = ids.join(\cf4 "_"\cf5 );\
+\
+  \cf6 // \uc0\u1057 \u1090 \u1074 \u1072 \u1088 \u1072 \u1077 \u1084  \u1072 \u1073 \u1086  \u1072 \u1073 \u1085 \u1072 \u1118 \u1083 \u1103 \u1077 \u1084  \u1076 \u1072 \u1082 \u1091 \u1084 \u1077 \u1085 \u1090  \u1095 \u1072 \u1090 \u1072 \
+  \cf2 await \cf5 FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'chats'\cf5 ).doc(cid).set(\{\
+    \cf4 'users'\cf5 : ids,\
+    \cf4 'last'\cf5 : \cf4 "\uc0\u1058 \u1101 \u1084 \u1072 : \cf5 $title\cf4 "\cf5 ,\
+    \cf4 'adId'\cf5 : adId, \cf6 // \uc0\u1042 \u1054 \u1058  \u1055 \u1071 \u1058 \u1067 \u1049  \u1040 \u1056 \u1043 \u1059 \u1052 \u1045 \u1053 \u1058 , \u1071 \u1050 \u1030  \u1052 \u1067  \u1044 \u1040 \u1044 \u1040 \u1051 \u1030 \
+    \cf4 'time'\cf5 : FieldValue.
+\f1\i \cf7 serverTimestamp
+\f0\i0 \cf5 (),\
+  \}, \cf7 SetOptions\cf5 (merge: \cf2 true\cf5 ));\
+\
+  \cf2 if \cf5 (context.\cf8 mounted\cf5 ) \{\
+    Navigator.
+\f1\i \cf7 push
+\f0\i0 \cf5 (context, \cf7 MaterialPageRoute\cf5 (builder: (c) => \cf7 ChatPage\cf5 (chatId: cid)));\
+  \}\
+\}\
+\
+\
+\cf6 // --- 3. \uc0\u1048 \u1057 \u1055 \u1056 \u1040 \u1042 \u1051 \u1045 \u1053 \u1053 \u1067 \u1049  \u1055 \u1059 \u1041 \u1051 \u1048 \u1063 \u1053 \u1067 \u1049  \u1055 \u1056 \u1054 \u1060 \u1048 \u1051 \u1068  ---\
+\cf2 class \cf5 PublicProfile \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 final \cf5 String \cf8 uid\cf5 ;\
+  \cf2 const \cf5 PublicProfile(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 uid\cf5 \});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 StreamBuilder\cf5 <DocumentSnapshot>(\
+      stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'users'\cf5 ).doc(\cf8 uid\cf5 ).snapshots(),\
+      builder: (context, snap) \{\
+        \cf2 if \cf5 (!snap.\cf8 hasData\cf5 ) \cf2 return const \cf7 Scaffold\cf5 (body: \cf7 Center\cf5 (child: \cf7 CircularProgressIndicator\cf5 ()));\
+        \cf2 final \cf5 d = snap.\cf8 data\cf5 !.data() \cf2 as \cf5 Map<String, \cf2 dynamic\cf5 >?;\
+        \cf2 if \cf5 (d == \cf2 null\cf5 ) \cf2 return const \cf7 Scaffold\cf5 (body: \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1050 \u1072 \u1088 \u1099 \u1089 \u1090 \u1072 \u1083 \u1100 \u1085 \u1110 \u1082  \u1085 \u1077  \u1079 \u1085 \u1086 \u1081 \u1076 \u1079 \u1077 \u1085 \u1099 "\cf5 )));\
+\
+        \cf2 return \cf7 Scaffold\cf5 (\
+          appBar: \cf7 AppBar\cf5 (title: \cf7 Text\cf5 (d[\cf4 'name'\cf5 ] ?? \cf4 "\uc0\u1057 \u1091 \u1089 \u1077 \u1076 "\cf5 )),\
+          body: \cf7 ListView\cf5 (padding: \cf2 const \cf7 EdgeInsets\cf5 .\cf7 all\cf5 (\cf11 25\cf5 ), children: [\
+            \cf7 Center\cf5 (child: \cf7 CircleAvatar\cf5 (radius: \cf11 55\cf5 ,\
+                backgroundImage: d[\cf4 'avatar'\cf5 ] != \cf2 null \cf5 ? \cf7 MemoryImage\cf5 (base64Decode(d[\cf4 'avatar'\cf5 ])) : \cf2 null\cf5 ,\
+                child: d[\cf4 'avatar'\cf5 ] == \cf2 null \cf5 ? \cf2 const \cf7 Icon\cf5 (Icons.
+\f1\i \cf8 person
+\f0\i0 \cf5 , size: \cf11 50\cf5 ) : \cf2 null\cf5 )),\
+            \cf2 const \cf7 SizedBox\cf5 (height: \cf11 10\cf5 ),\
+            \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\cf5 $\{(d[\cf4 'avgRating'\cf5 ] ?? \cf11 5.0\cf5 ).toStringAsFixed(\cf11 1\cf5 )\} 
+\f2 \cf4 \uc0\u9733 
+\f0 "\cf5 ,\
+                style: \cf2 const \cf7 TextStyle\cf5 (fontSize: \cf11 26\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 , color: Colors.
+\f1\i \cf8 orange
+\f0\i0 \cf5 ))),\
+            \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "@\cf5 $\{d[\cf4 'username'\cf5 ] ?? \cf4 'user'\cf5 \}\cf4 "\cf5 , style: \cf2 const \cf7 TextStyle\cf5 (color: Colors.
+\f1\i \cf8 grey
+\f0\i0 \cf5 ))),\
+            \cf2 const \cf7 Divider\cf5 (height: \cf11 50\cf5 ),\
+            \cf2 const \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1088 \u1072 \u1087 \u1072 \u1085 \u1086 \u1074 \u1099  \u1089 \u1091 \u1089 \u1077 \u1076 \u1072 :"\cf5 , style: \cf7 TextStyle\cf5 (fontSize: \cf11 20\cf5 , fontWeight: FontWeight.
+\f1\i \cf8 bold
+\f0\i0 \cf5 )),\
+            \cf2 const \cf7 SizedBox\cf5 (height: \cf11 15\cf5 ),\
+            \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+              stream: FirebaseFirestore.
+\f1\i \cf8 instance
+\f0\i0 \cf5 .collection(\cf4 'ads'\cf5 )\
+                  .where(\cf4 'uid'\cf5 , isEqualTo: \cf8 uid\cf5 ).where(\cf4 'status'\cf5 , isEqualTo: \cf4 'active'\cf5 ).snapshots(),\
+              builder: (c, s) => !s.\cf8 hasData \cf5 ? \cf2 const \cf7 SizedBox\cf5 () : \cf7 Column\cf5 (\
+                  children: s.\cf8 data\cf5 !.\cf8 docs\cf5 .map((ad) => \cf7 AdCard\cf5 (d: ad)).toList() \cf6 // \uc0\u1044 \u1086 \u1073 \u1072 \u1074 \u1083 \u1077 \u1085  .toList()\
+              \cf5 ),\
+            ),\
+          ]),\
+        );\
+      \},\
+    );\
+  \}\
+\}\
+\cf2 class \cf5 AdsManager \cf2 extends \cf5 StatelessWidget \{\
+  \cf2 final \cf5 String \cf8 title\cf5 ;\
+  \cf2 final \cf5 Query? \cf8 query\cf5 ;\
+  \cf2 const \cf5 AdsManager(\{\cf2 super\cf5 .key, \cf2 required this\cf5 .\cf8 title\cf5 , \cf2 this\cf5 .\cf8 query\cf5 \});\
+\
+  \cf10 @override\
+  \cf5 Widget \cf7 build\cf5 (BuildContext context) \{\
+    \cf2 return \cf7 Scaffold\cf5 (\
+      appBar: \cf7 AppBar\cf5 (title: \cf7 Text\cf5 (\cf8 title\cf5 )),\
+      body: \cf8 query \cf5 == \cf2 null\
+          \cf5 ? \cf2 const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1055 \u1091 \u1089 \u1090 \u1072 "\cf5 ))\
+          : \cf7 StreamBuilder\cf5 <QuerySnapshot>(\
+        stream: \cf8 query\cf5 !.snapshots(),\
+        builder: (c, s) \{\
+          \cf2 if \cf5 (!s.\cf8 hasData\cf5 ) \cf2 return const \cf7 LinearProgressIndicator\cf5 ();\
+          \cf2 if \cf5 (s.\cf8 data\cf5 !.\cf8 docs\cf5 .\cf8 isEmpty\cf5 ) \cf2 return const \cf7 Center\cf5 (child: \cf7 Text\cf5 (\cf4 "\uc0\u1053 \u1110 \u1095 \u1086 \u1075 \u1072  \u1085 \u1103 \u1084 \u1072 "\cf5 ));\
+          \cf2 return \cf7 ListView\cf5 (\
+            children: s.\cf8 data\cf5 !.\cf8 docs\cf5 .map((d) => \cf7 AdCard\cf5 (d: d)).toList(), \cf6 // \uc0\u1058 \u1091 \u1090  \u1090 \u1086 \u1078 \u1077  .toList()\
+          \cf5 );\
+        \},\
+      ),\
+    );\
+  \}\
+\}\
+\
+}
